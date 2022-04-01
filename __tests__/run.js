@@ -4,7 +4,18 @@ const {Parser} = require('../src/Parser');
 
 const parser = new Parser();
 
-const program = `"test"`;
+const program = `
+/*
+    Multi-line comment
+*/
+// Single-line comment
+
+// String
+"hello";
+
+// Number
+42;
+`;
 
 const ast = parser.parse(program);
 
