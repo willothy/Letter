@@ -11,8 +11,13 @@ const Spec = [
     //Single-Line comments:
     [/^\/\/.*/, null],
 
-    //Multiline comments
+    // Multiline comments
     [/\/\*[\s\S]*?\*\//, null],
+
+    // Symbols
+    [/^;/, ';'],
+    [/^\{/, '{'],
+    [/^\}/, '}'],
 
     // Numbers: 
     [/^\d+/, 'NUMBER'],

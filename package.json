@@ -7,5 +7,8 @@
     "test": "node ./__tests__/run.js"
   },
   "author": "",
-  "license": "GPLv2"
+  "license": "GPLv2",
+  "dependencies": {
+    "assert": "^2.0.0"
+  }
 }

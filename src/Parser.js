@@ -35,21 +35,93 @@ class Parser {
      * Main entry point
      * 
      *  Program
-     *      : NumericLiteral
+     *      : StatementList
      *      ;
      */
     Program() {
         
         return {
             type: 'Program',
-            body: this.Literal()
+            body: this.StatementList()
         };
+    }
+
+    /**
+     *  StatementList
+     *      : Statement
+     *      | StatementList Statement -> Statement Statement Statement ...
+     *      ;
+     */
+    StatementList(stopLookahead = null) {
+        const statementList = [this.Statement()];
+
+        while(this._lookahead != null && this._lookahead.type !== stopLookahead) {
+            statementList.push(this.Statement());
+        }
+
+        return statementList;
+    }
+
+
+    /**
+     *  Statement
+     *      : ExpressionStatement
+     *      | BlockStatement
+     *      ;
+     */
+    Statement() {
+        switch(this._lookahead.type) {
+            case '{': 
+                return this.BlockStatement();
+            default: 
+                return this.ExpressionStatement();
+        }
+    }
+
+    /**
+     *  BlockStatement
+     *      : '{' OptStatementList '}'
+     *      ;
+     */
+    BlockStatement() {
+        this._eat('{');
+
+        const body = this._lookahead.type !== '}' ? this.StatementList('}') : [];
+
+        this._eat('}');
+
+        return {
+            type: 'BlockStatement',
+            body,
+        }
+    }
+
+    /**
+     *  ExpressionStatement
+     *      : Expression ';'
+     */
+    ExpressionStatement() {
+        const expression = this.Expression();
+        this._eat(';');
+        return {
+            type: 'ExpressionStatement',
+            expression
+        }
+    }
+
+    /**
+     *  Expression
+     *      : Literal
+     *      ;
+     */
+    Expression() {
+        return this.Literal();
     }
 
     /**
      *  Literal
      *      : NumericLiteral
-     *      : StringLiteral
+     *      | StringLiteral
      *      ;
      */
     Literal() {
@@ -59,7 +131,7 @@ class Parser {
             case 'STRING': 
                 return this.StringLiteral();
         }
-        throw new SyntaxError(`Literal: unexpected literal production`);
+        throw new SyntaxError(`Literal: unexpected literal production "${this._lookahead.value | '<cannot read literal>'}"`);
     }
 
     /**
