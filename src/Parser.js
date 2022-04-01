@@ -53,7 +53,7 @@ const SExpressionFactory = {
     BlockStatement(body) {
         return ['begin', body];
     },
-    ExpressionStatement() {
+    ExpressionStatement(expression) {
         return expression;
     },
     StringLiteral(value) {
