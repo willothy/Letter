@@ -2,7 +2,9 @@ module.exports = test => {
     test(`
         {
             42;
-            "hello";
+            {
+                "hello";
+            }
         }
     `, {
         type: 'Program',
@@ -18,12 +20,17 @@ module.exports = test => {
                         }
                     },
                     {
-                        type: 'ExpressionStatement',
-                        expression: {
-                            type: 'StringLiteral',
-                            value: 'hello'
-                        }
-                    }, 
+                        type: 'BlockStatement',
+                        body: [
+                            {
+                                type: 'ExpressionStatement',
+                                expression: {
+                                    type: 'StringLiteral',
+                                    value: 'hello'
+                                }
+                            }, 
+                        ]
+                    }   
                 ]
             }
         ]
