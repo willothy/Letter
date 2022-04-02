@@ -130,6 +130,20 @@ const JSONFactory = {
             update,
             body
         };
+    },
+    FunctionDeclaration(name, params, body) {
+        return {
+            type: 'FunctionDeclaration',
+            name,
+            params,
+            body
+        };
+    },
+    ReturnStatement(argument) {
+        return {
+            type: 'ReturnStatement',
+            argument
+        };
     }
 };
 
@@ -198,6 +212,20 @@ const SExpressionFactory = {
             body,
             'while',
             test
+        ];
+    },
+    FunctionDeclaration(name, params, body) {
+        return [
+            'proc',
+            name,
+            params,
+            body
+        ];
+    },
+    ReturnStatement(argument) {
+        return [
+            'return',
+            argument
         ];
     }
 };

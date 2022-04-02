@@ -1,14 +1,13 @@
 class Point {
-    def constructor(x, y) {
+    proc constructor(x, y) {
         this.x = x;
         this.y = y;
     }
 
-    def calc() {
-        return this.x + this.y;
-    }
+    proc calc() return this.x + this.y;
 }
 
-let p = new Point(10, 20);
+let x = 10, y = 20;
+let p = new Point(x, y);
 
 p.calc();
