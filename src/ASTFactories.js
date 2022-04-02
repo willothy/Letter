@@ -72,6 +72,14 @@ const JSONFactory = {
             type: 'Identifier',
             name
         }
+    },
+    IfStatement(test, consequent, alternate) {
+        return {
+            type: 'IfStatement',
+            test,
+            consequent,
+            alternate
+        };
     }
 };
 
@@ -108,6 +116,9 @@ const SExpressionFactory = {
     },
     Identifier(name) {
         return ['id', name];
+    },
+    IfStatement(test, consequent, alternate) {
+        return ['if', test, consequent, 'else', alternate];
     }
 };
 

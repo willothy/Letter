@@ -12,7 +12,9 @@ const tests = [
     require('./block-test.js'),
     require('./empty-statement-test.js'),
     require('./math-test.js'),
-    require('./variable-test.js')
+    require('./assignment-test.js'),
+    require('./variable-test.js'),
+    require('./if-test.js')
 ]
 
 const parser = new Parser();
