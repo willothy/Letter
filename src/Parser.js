@@ -1,72 +1,10 @@
 
-const exp = require('constants');
 const {Tokenizer} = require('./Tokenizer');
-
-
-// -------------------
-// Default (JSON) AST factories
-const DefaultFactory = {
-    Program(body) {
-        return {
-            type: 'Program',
-            body
-        };
-    },
-    EmptyStatement(){
-        return {
-            type: 'EmptyStatement'
-        };
-    },
-    BlockStatement(body) {
-        return {
-            type: 'BlockStatement',
-            body
-        };
-    },
-    ExpressionStatement(expression) {
-        return {
-            type: 'ExpressionStatement',
-            expression
-        };
-    },
-    StringLiteral(value) {
-        return {
-            type: 'StringLiteral',
-            value
-        };
-    },
-    NumericLiteral(value) {
-        return {
-            type: 'NumericLiteral',
-            value
-        };
-    }
-};
-
-// ------------------
-// S-Expression AST factories
-const SExpressionFactory = {
-    Program(body) {
-        return ['begin', body];
-    },
-    EmptyStatement() {},
-    BlockStatement(body) {
-        return ['begin', body];
-    },
-    ExpressionStatement(expression) {
-        return expression;
-    },
-    StringLiteral(value) {
-        return `"${value}"`;
-    },
-    NumericLiteral(value) {
-        return value;
-    }
-}
+const {Factories} = require('./ASTFactories');
 
 const AST_MODE = 'default';
 
-const factory = AST_MODE === 'default' ? DefaultFactory : SExpressionFactory;
+const factory = Factories[AST_MODE];
 
 class Parser {
     /**
@@ -185,7 +123,70 @@ class Parser {
      *      ;
      */
     Expression() {
+        return this.AdditiveExpression();
+    }
+
+    /**
+     *  AdditiveExpression
+     *      : MultiplicativeExpression
+     *      | AdditiveExpression ADDITIVE_OPERAND MultiplicativeExpression
+     */
+    AdditiveExpression() {
+        return this._BinaryExpression('MultiplicativeExpression', 'ADDITIVE_OPERATOR');
+    }
+
+    /**
+     *  MultiplicativeExpression
+     *      : PrimaryExpression
+     *      | MultiplicativeExpression MULTIPLICATIVE_OPERATOR PrimaryExpression -> PrimaryExpression MULTIPLICATIVE_OPERATOR ...
+     */
+    MultiplicativeExpression() {
+        return this._BinaryExpression('PrimaryExpression', 'MULTIPLICATIVE_OPERATOR');
+    }
+
+    /**
+     *  Generic binary expression
+     */
+    _BinaryExpression(builderName, operatorToken) {
+        let left = this[builderName]();
+        while(this._lookahead.type === operatorToken) {
+            // Operator *, /
+            const operator = this._eat(operatorToken).value;
+
+            const right = this[builderName]();
+
+            left = factory.BinaryExpression(operator, left, right);
+        }
+
+        return left;
+    }
+
+    /**
+     *  PrimaryExpression
+     *      : Literal
+     *      | ParenthesizedExpression
+     *      ;
+     */
+    PrimaryExpression() {
+        switch (this._lookahead.type) {
+            case '(': 
+                return this.ParenthesizedExpression();
+            default:
+                return this.Literal();
+        }
         return this.Literal();
+    }
+
+    /**
+     *  ParenthesizedExpression
+     *      : '(' Expression ')'
+     *      ;
+     */
+    ParenthesizedExpression() {
+        this._eat('(');
+        const expression = this.Expression();
+        this._eat(')');
+        return expression;
     }
 
     /**

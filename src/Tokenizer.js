@@ -1,31 +1,4 @@
-
-/** Tokenizer Spec
- * 
- */
-
-const Spec = [
-    // Whitespace:
-    [/^\s+/, null],
-
-    // Comments:
-    //Single-Line comments:
-    [/^\/\/.*/, null],
-
-    // Multiline comments
-    [/\/\*[\s\S]*?\*\//, null],
-
-    // Symbols
-    [/^;/, ';'],
-    [/^\{/, '{'],
-    [/^\}/, '}'],
-
-    // Numbers: 
-    [/^\d+/, 'NUMBER'],
-
-    // Strings:
-    [/^"[^"]*"/, 'STRING'],
-    [/^'[^']*'/, 'STRING']
-];
+const {Spec} = require('./LexerSpec.js');
 
 /**
  * Tokenizer class
