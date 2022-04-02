@@ -100,6 +100,13 @@ const JSONFactory = {
             left,
             right
         };
+    },
+    UnaryExpression(operator, argument) {
+        return {
+            type: 'UnaryExpression',
+            operator,
+            argument
+        };
     }
 };
 
