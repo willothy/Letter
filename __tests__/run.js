@@ -23,14 +23,53 @@ const tests = [
     require('./do-while-test.js'),
     require('./function-declaration-test.js'),
     require('./member-test.js'),
-    require('./call-test.js')
+    require('./call-test.js'),
+    require('./class-test.js')
 ]
 
 const parser = new Parser();
 
 function exec() {
     const program = `
-        if (x) x = 1; else if (y) y = 1;
+        class Point {
+            proc constructor(x, y) {
+                this.x = x;
+                this.y = y;
+            }
+        
+            proc calc() return this.x + this.y;
+        }
+        
+        class Point3D extends Point {
+            proc constructor (x, y, z) {
+                super(x, y);
+                this.z = z;
+            }
+            proc constructor (point2d, z) {
+                this.x = point2d.x;
+                this.y = point2d.y;
+                this.z = z;
+            }
+        
+            proc calc() return super() + this.z;
+        }
+        
+        // This is a comment
+        
+        /*
+            This is also a comment
+        */
+        
+        let x, y = 20;
+        x = 10;
+        
+        let p = new Point(x, y);
+        
+        let p3d = new Point3D(p.x, p['y'], 10);
+        
+        let p3d2 = new Point3D(p, 0);
+        
+        p.calc();
     `;
     
     const ast = parser.parse(program);

@@ -12,6 +12,8 @@ class Tokenizer {
     init(string) {
         this._string = string;
         this._cursor = 0;
+        this._lineno = 0;
+        this._colno = 0;
     }
 
     /**
@@ -46,16 +48,23 @@ class Tokenizer {
             if (tokenValue == null) continue;
             
             if (tokenType == null) {
+                const newLine = /\n/.exec(string) != null;
+                if (newLine == true) {
+                    this._colno = 0;
+                    this._lineno++;
+                }
                 return this.getNextToken();
             }
 
             return {
                 type: tokenType,
                 value: tokenValue,
+                lineno: this._lineno,
+                colno: this._colno
             };
         }
 
-        throw new SyntaxError(`Unexpected token: "${string[0]}"`);
+        throw new SyntaxError(`Unexpected token: "${string[0]} at line "${this._lineno}", col "${this._colno}"`);
     }
 
     _match(regexp, string) {
@@ -63,6 +72,7 @@ class Tokenizer {
         if (matched == null) return null;
         
         this._cursor += matched[0].length;
+        this._colno += matched[0].length;
         return matched[0];
     }
 }

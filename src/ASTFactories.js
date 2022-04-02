@@ -159,6 +159,31 @@ const JSONFactory = {
             callee,
             arguments
         };
+    },
+    ClassDeclaration(id, superClass, body) {
+        return {
+            type: 'ClassDeclaration',
+            id,
+            superClass,
+            body
+        };
+    },
+    ThisExpression() {
+        return {
+            type: 'ThisExpression'
+        };
+    },
+    Super() {
+        return {
+            type: 'Super'
+        };
+    },
+    NewExpression(callee, arguments) {
+        return {
+            type: 'NewExpression',
+            callee,
+            arguments
+        };
     }
 };
 
@@ -254,6 +279,27 @@ const SExpressionFactory = {
     CallExpression(callee, arguments) {
         return [
             'call',
+            callee,
+            arguments
+        ];
+    },
+    ClassDeclaration(id, superClass, body) {
+        return [
+            'class',
+            id,
+            superClass,
+            body
+        ];
+    },
+    ThisExpression() {
+        return 'this';
+    },
+    Super() {
+        return 'super';
+    },
+    NewExpression(callee, arguments) {
+        return [
+            'new',
             callee,
             arguments
         ];

@@ -30,6 +30,7 @@ class Parser {
         // used for predictive parsing.
 
         this._lookahead = this._tokenizer.getNextToken();
+        
 
         // Parse recursively starting from the Program entry point
 
@@ -74,6 +75,7 @@ class Parser {
      *      | IterationStatement
      *      | FunctionDeclaration
      *      | ReturnStatement
+     *      | ClassDeclaration
      *      ;
      */
     Statement() {
@@ -88,6 +90,8 @@ class Parser {
                 return this.VariableStatement();
             case 'proc':
                 return this.FunctionDeclaration();
+            case 'class':
+                return this.ClassDeclaration();
             case 'return':
                 return this.ReturnStatement();
             case 'while':
@@ -97,6 +101,30 @@ class Parser {
             default: 
                 return this.ExpressionStatement();
         }
+    }
+
+    /**
+     *  ClassDeclaration
+     *      : 'class' Identifier OptClassExtends BlockStatement
+     *      ;
+     */
+    ClassDeclaration() {
+        this._eat('class');
+        const id = this.Identifier();
+
+        const superClass = this._lookahead.type === 'extends' ? this.ClassExtends() : null;
+
+        const body = this.BlockStatement();
+
+        return factory.ClassDeclaration(id, superClass, body);
+    }
+
+    /**
+     *  ClassExtends
+     */
+    ClassExtends() {
+        this._eat('extends');
+        return this.Identifier();
     }
 
     /**
@@ -422,7 +450,7 @@ class Parser {
     _checkValidAssignmentTarget(node) {
         if (node.type === 'Identifier' || node.type === 'MemberExpression') return node;
 
-        throw new SyntaxError('Invalid left-hand side in assignment expression');
+        throw new SyntaxError(`Invalid left-hand side in assignment expression at line "${this._lineno}", col "${this._colno}"`);
     }
 
     /**
@@ -552,6 +580,10 @@ class Parser {
      *      ;
      */
     CallMemberExpression() {
+        if (this._lookahead.type === 'super') {
+            return this._CallExpression(this.Super());
+        }
+
         const member = this.MemberExpression();
 
         if (this._lookahead.type === '(') {
@@ -642,6 +674,8 @@ class Parser {
      *      : Literal
      *      | ParenthesizedExpression
      *      | Identifier
+     *      | ThisExpression
+     *      | NewExpression
      *      ;
      */
     PrimaryExpression() {
@@ -653,9 +687,45 @@ class Parser {
                 return this.ParenthesizedExpression();
             case 'IDENTIFIER':
                 return this.Identifier();
+            case 'this':
+                return this.ThisExpression();
+            case 'new':
+                return this.NewExpression();
             default:
                 return this.LeftHandSideExpression();
         }
+    }
+
+    /**
+     *  NewExpression
+     *      : 'new' MemberExpression Arguments -> new MyNamespace.MyClass(x, y);
+     *      ;
+     */
+    NewExpression() {
+        this._eat('new');
+        const callee = this.MemberExpression();
+        const args = this.Arguments();
+        return factory.NewExpression(callee, args);
+    }
+
+    /**
+     *  ThisExpression
+     *      : 'this'
+     *      ;
+     */
+    ThisExpression() {
+        this._eat('this');
+        return factory.ThisExpression();
+    }
+
+    /**
+     *  Super
+     *      : 'super'
+     *      ;
+     */
+    Super() {
+        this._eat('super');
+        return factory.Super();
     }
 
     /**
@@ -706,7 +776,7 @@ class Parser {
             case 'null':
                 return this.NullLiteral();
         }
-        throw new SyntaxError(`Literal: unexpected literal production "${this._lookahead.value || '<cannot read literal>'}"`);
+        throw new SyntaxError(`Literal: unexpected literal production "${this._lookahead.value}" at line "${this._lineno}", col "${this._colno}"`);
     }
 
     /**
@@ -765,19 +835,22 @@ class Parser {
 
         if (token == null) {
             throw new SyntaxError(
-                `Unexpected end of input, expected: "${tokenType}"`
+                `Unexpected end of input, expected: "${tokenType}" at line "${this._lineno}", col "${this._colno}"`
             );
         }
 
         if (token.type !== tokenType) {
             throw new SyntaxError(
-                `Unexpected token: "${token.value}", expected: "${tokenType}"`
-            )
+                `Unexpected token: "${token.value}", expected: "${tokenType}" at line "${this._lineno}", col "${this._colno}"`
+            );
         }
 
         // Advance parser to next token
         this._lookahead = this._tokenizer.getNextToken();
-
+        if (this._lookahead != null) {
+            this._lineno = this._lookahead.lineno;
+            this._colno = this._lookahead.colno;
+        }
         return token;
     }
 }

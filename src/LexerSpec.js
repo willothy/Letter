@@ -11,7 +11,8 @@ const Spec = [
     [/^\/\/.*/, null],
 
     // Multiline comments
-    [/\/\*[\s\S]*?\*\//, null],
+    [/^\/\*[\s\S]*?\*\//, null],
+    
 
     // Symbols
     [/^;/, ';'],
@@ -55,6 +56,11 @@ const Spec = [
     [/^\bfor\b/, 'for'],
     [/^\bproc\b/, 'proc'],
     [/^\breturn\b/, 'return'],
+    [/^\bnew\b/, 'new'],
+    [/^\bclass\b/, 'class'],
+    [/^\bextends\b/, 'extends'],
+    [/^\bsuper\b/, 'super'],
+    [/^\bthis\b/, 'this'],
 
     // Numbers: 
     [/^\d+/, 'NUMBER'],
