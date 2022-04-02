@@ -69,6 +69,7 @@ class Parser {
      *      : ExpressionStatement
      *      | BlockStatement
      *      | EmptyStatement
+     *      | VariableStatement
      *      ;
      */
     Statement() {
@@ -77,9 +78,63 @@ class Parser {
                 return this.EmptyStatement();
             case '{': 
                 return this.BlockStatement();
+            case 'let':
+                return this.VariableStatement();
             default: 
                 return this.ExpressionStatement();
         }
+    }
+
+    /**
+     *  VariableStatement
+     *      : 'let' VariableDeclarationList ';'
+     *      ;
+     */
+    VariableStatement() {
+        this._eat('let');
+        const declarations = this.VariableDeclarationList();
+        this._eat(';');
+        return factory.VariableStatement(declarations);
+    }
+
+
+    /**
+     *  VariableDeclarationList
+     *      : VariableDeclaration
+     *      | VariableDeclarationList ',' VariableDeclaration
+     *      ;
+     */
+    VariableDeclarationList() {
+        const declarations = [];
+
+        do {
+            declarations.push(this.VariableDeclaration());
+        } while (this._lookahead.type == ',' && this._eat(','));
+
+        return declarations;
+    }
+
+    /**
+     *  VariableDeclaration
+     *      : Identifier OptVariableInitializer
+     */
+    VariableDeclaration() {
+        const id = this.Identifier();
+
+        const init = this._lookahead.type !== ';' && this._lookahead.type !== ',' 
+            ? this.VariableInitializer() : null;
+
+        return factory.VariableDeclaration(id, init);
+    }
+
+    /**
+     *  VariableInitializer
+     *      : SIMPLE_ASSIGN AssignmentExpression
+     *      ;
+     */
+    VariableInitializer() {
+        this._eat('SIMPLE_ASSIGN');
+        return this.AssignmentExpression();
     }
 
     /**
@@ -123,7 +178,73 @@ class Parser {
      *      ;
      */
     Expression() {
-        return this.AdditiveExpression();
+        return this.AssignmentExpression();
+    }
+
+    /**
+     *  AssignmentExpression
+     *      : AdditiveExpression
+     *      | LeftHandSideExpression AssignmentOperator AssignmentExpression
+     */
+    AssignmentExpression() {
+        const left = this.AdditiveExpression();
+
+        if (!this._isAssignmentOperator(this._lookahead.type)) {
+            return left;
+        }
+
+        return factory.AssignmentExpression(
+            this.AssignmentOperator().value, 
+            this._checkValidAssignmentTarget(left),
+            this.AssignmentExpression()
+        );
+    }
+
+    /**
+     *  LeftHandSideExpression
+     *      : Identifier
+     *      ;
+     */
+    LeftHandSideExpression() {
+        return this.Identifier();
+    }
+
+    /**
+     *  Identifier
+     */
+    Identifier() {
+        const name = this._eat('IDENTIFIER').value;
+        return factory.Identifier(name);
+    }
+
+    /**
+     *  Determines whether the token is an assignment operator
+     *  @returns bool
+     */
+    _isAssignmentOperator(tokenType) {
+        return tokenType === 'SIMPLE_ASSIGN' || tokenType === 'COMPLEX_ASSIGN';
+    }
+
+    /**
+     *  Check whether assignment target is valid
+     */
+    _checkValidAssignmentTarget(node) {
+        if (node.type === 'Identifier') return node;
+
+        throw new SyntaxError('Invalid left-hand side in assignment expression');
+    }
+
+    /**
+     *  AssignmentOperator
+     *      : SIMPLE_ASSIGN
+     *      | COMPLEX_ASSIGN
+     *      ;
+     */
+    AssignmentOperator() {
+        if (this._lookahead.type === 'SIMPLE_ASSIGN') {
+            return this._eat('SIMPLE_ASSIGN');
+        }
+        return this._eat('COMPLEX_ASSIGN');
     }
 
     /**
@@ -165,17 +286,29 @@ class Parser {
      *  PrimaryExpression
      *      : Literal
      *      | ParenthesizedExpression
+     *      | LeftHandSideExpression
      *      ;
      */
     PrimaryExpression() {
+        if (this._isLiteral(this._lookahead.type)) {
+            return this.Literal();
+        }
         switch (this._lookahead.type) {
             case '(': 
                 return this.ParenthesizedExpression();
             default:
-                return this.Literal();
+                return this.LeftHandSideExpression();
         }
-        return this.Literal();
     }
+
+    /**
+     *  Check if token is a literal or not
+     *  @returns bool
+     */
+    _isLiteral(tokenType) {
+        return tokenType === 'NUMBER' || tokenType === 'STRING';
+    }
+
 
     /**
      *  ParenthesizedExpression
@@ -202,7 +335,7 @@ class Parser {
             case 'STRING': 
                 return this.StringLiteral();
         }
-        throw new SyntaxError(`Literal: unexpected literal production "${this._lookahead.value | '<cannot read literal>'}"`);
+        throw new SyntaxError(`Literal: unexpected literal production "${this._lookahead.value || '<cannot read literal>'}"`);
     }
 
     /**

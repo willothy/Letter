@@ -6,7 +6,7 @@ const JSONFactory = {
     Program(body) {
         return {
             type: 'Program',
-            body
+            body,
         };
     },
     EmptyStatement(){
@@ -17,25 +17,25 @@ const JSONFactory = {
     BlockStatement(body) {
         return {
             type: 'BlockStatement',
-            body
+            body,
         };
     },
     ExpressionStatement(expression) {
         return {
             type: 'ExpressionStatement',
-            expression
+            expression,
         };
     },
     StringLiteral(value) {
         return {
             type: 'StringLiteral',
-            value
+            value,
         };
     },
     NumericLiteral(value) {
         return {
             type: 'NumericLiteral',
-            value
+            value,
         };
     },
     BinaryExpression(operator, left, right) {
@@ -43,8 +43,35 @@ const JSONFactory = {
             type: 'BinaryExpression',
             operator,
             left,
-            right
+            right,
         };
+    },
+    AssignmentExpression(operator, left, right) {
+        return {
+            type: 'AssignmentExpression',
+            operator,
+            left,
+            right,
+        };
+    },
+    VariableStatement(declarations) {
+        return {
+            type: 'VariableStatement',
+            declarations,
+        };
+    },
+    VariableDeclaration(id, init) {
+        return {
+            type: 'VariableDeclaration',
+            id,
+            init
+        }
+    },
+    Identifier(name) {
+        return {
+            type: 'Identifier',
+            name
+        }
     }
 };
 
@@ -68,7 +95,19 @@ const SExpressionFactory = {
         return value;
     },
     BinaryExpression(operator, left, right) {
-        return [left, operator, right];
+        return [operator, left, right];
+    },
+    AssignmentExpression(operator, left, right) {
+        return [operator, left, right];
+    },
+    VariableStatement(declarations) {
+        return ['let', declarations]
+    },
+    VariableDeclaration(id, init) {
+        return [id, init];
+    },
+    Identifier(name) {
+        return ['id', name];
     }
 };
 

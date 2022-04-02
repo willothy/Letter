@@ -11,7 +11,8 @@ const tests = [
     require('./statement-list-test.js'),
     require('./block-test.js'),
     require('./empty-statement-test.js'),
-    require('./math-test.js')
+    require('./math-test.js'),
+    require('./variable-test.js')
 ]
 
 const parser = new Parser();
