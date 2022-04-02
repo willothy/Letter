@@ -152,6 +152,13 @@ const JSONFactory = {
             object,
             property
         };
+    },
+    CallExpression(callee, arguments) {
+        return {
+            type: 'CallExpression',
+            callee,
+            arguments
+        };
     }
 };
 
@@ -242,6 +249,13 @@ const SExpressionFactory = {
             computed,
             object,
             property
+        ];
+    },
+    CallExpression(callee, arguments) {
+        return [
+            'call',
+            callee,
+            arguments
         ];
     }
 };
