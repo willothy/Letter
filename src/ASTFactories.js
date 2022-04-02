@@ -107,6 +107,29 @@ const JSONFactory = {
             operator,
             argument
         };
+    },
+    WhileStatement(test, body) {
+        return {
+            type: 'WhileStatement',
+            test,
+            body
+        }
+    },
+    DoWhileStatement(body, test) {
+        return {
+            type: 'DoWhileStatement',
+            body,
+            test
+        };
+    },
+    ForStatement(init, test, update, body) {
+        return {
+            type: 'ForStatement',
+            init,
+            test,
+            update,
+            body
+        };
     }
 };
 
@@ -155,6 +178,27 @@ const SExpressionFactory = {
     },
     LogicalExpression(operator, left, right) {
         return [operator, left, right];
+    },
+    UnaryExpression(operator, argument) {
+        return [
+            operator,
+            argument
+        ];
+    },
+    WhileStatement(test, body) {
+        return [
+            'while',
+            test,
+            body
+        ];
+    },
+    DoWhileStatement(body, test) {
+        return [
+            'do',
+            body,
+            'while',
+            test
+        ];
     }
 };
 
