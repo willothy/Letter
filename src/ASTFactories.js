@@ -144,6 +144,14 @@ const JSONFactory = {
             type: 'ReturnStatement',
             argument
         };
+    },
+    MemberExpression(computed, object, property) {
+        return {
+            type: 'MemberExpression',
+            computed,
+            object,
+            property
+        };
     }
 };
 
@@ -226,6 +234,14 @@ const SExpressionFactory = {
         return [
             'return',
             argument
+        ];
+    },
+    MemberExpression(computed, object, property) {
+        return [
+            'member',
+            computed,
+            object,
+            property
         ];
     }
 };

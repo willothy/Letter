@@ -420,7 +420,7 @@ class Parser {
      *  Check whether assignment target is valid
      */
     _checkValidAssignmentTarget(node) {
-        if (node.type === 'Identifier') return node;
+        if (node.type === 'Identifier' || node.type === 'MemberExpression') return node;
 
         throw new SyntaxError('Invalid left-hand side in assignment expression');
     }
@@ -538,11 +538,40 @@ class Parser {
 
     /** 
      *  LeftHandSideExpression
-     *      : Identifier
+     *      : MemberExpression
      *      ;
      */
     LeftHandSideExpression() {
-        return this.PrimaryExpression();
+        return this.MemberExpression();
+    }
+
+    /**
+     *  MemberExpression
+     *      : PrimaryExpression
+     *      | MemberExpression '.' Identifier
+     *      | MemberExpression '[' Expression ']'
+     *      ;
+     */
+    MemberExpression() {
+        let object = this.PrimaryExpression();
+
+        while (this._lookahead.type === '.' || this._lookahead.type === '[') {
+            // MemberExpression '.' Identifier
+            if (this._lookahead.type === '.') {
+                this._eat('.');
+                const property = this.Identifier();
+                object = factory.MemberExpression(false, object, property);
+            }
+
+            // MemberExpression '[' Expression ']'
+            if (this._lookahead.type === '[') {
+                this._eat('[');
+                const property = this.Expression();
+                this._eat(']');
+                object = factory.MemberExpression(true, object, property);
+            }
+        }
+        return object;
     }
 
     /**
