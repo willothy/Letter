@@ -14,23 +14,17 @@ const tests = [
     require('./math-test.js'),
     require('./assignment-test.js'),
     require('./variable-test.js'),
-    require('./if-test.js')
+    require('./if-test.js'),
+    require('./relational-test.js'),
+    require('./equality-test.js'),
+    require('./logical-test.js')
 ]
 
 const parser = new Parser();
 
 function exec() {
     const program = `
-    /*
-        Multi-line comment
-    */
-    // Single-line comment
-    
-    // String
-    "hello";
-    
-    // Number 
-    42;
+        if (x) x = 1; else if (y) y = 1;
     `;
     
     const ast = parser.parse(program);
@@ -38,13 +32,17 @@ function exec() {
     console.log(JSON.stringify(ast, null, 2));
 }
 
-// Manual test:
-//exec();
-
 function test(program, expected) {
     const ast = parser.parse(program);
     assert.deepEqual(ast, expected);
 }
+function autoTest() {
+    tests.forEach(testRun => testRun(test));
+    console.log('All assertions passed!');
+}
 
-tests.forEach(testRun => testRun(test));
-console.log('All assertions passed!');
+const testArgs = process.argv.slice(2);
+
+if (testArgs.includes("manual")) exec();
+if (testArgs.includes("auto")) autoTest();
+

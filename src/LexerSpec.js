@@ -21,6 +21,16 @@ const Spec = [
     [/^\)/, ')'],
     [/^,/, ','],
 
+    // Relational Operators
+    [/^[><]=?/, 'RELATIONAL_OPERATOR'],
+
+    // Equality Operators
+    [/^[=!]=/, 'EQUALITY_OPERATOR'],
+
+    // Logical operators: &&, ||
+    [/^&&/, 'LOGICAL_AND'],
+    [/^\|\|/, 'LOGICAL_OR'],
+
     // Assignment Operators
     [/^=/, 'SIMPLE_ASSIGN'],
     [/^[\*\/\+\-]=/, 'COMPLEX_ASSIGN'],
@@ -33,6 +43,9 @@ const Spec = [
     [/^\blet\b/, 'let'],
     [/^\bif\b/, 'if'],
     [/^\belse\b/, 'else'],
+    [/^\btrue\b/, 'true'],
+    [/^\bfalse\b/, 'false'],
+    [/^\bnull\b/, 'null'],
 
     // Numbers: 
     [/^\d+/, 'NUMBER'],

@@ -80,6 +80,26 @@ const JSONFactory = {
             consequent,
             alternate
         };
+    },
+    BooleanLiteral(value) {
+        return {
+            type: 'BooleanLiteral',
+            value 
+        };
+    },
+    NullLiteral() {
+        return {
+            type: 'NullLiteral',
+            value: null
+        };
+    },
+    LogicalExpression(operator, left, right) {
+        return {
+            type: 'LogicalExpression',
+            operator,
+            left,
+            right
+        };
     }
 };
 
@@ -119,6 +139,15 @@ const SExpressionFactory = {
     },
     IfStatement(test, consequent, alternate) {
         return ['if', test, consequent, 'else', alternate];
+    },
+    BooleanLiteral(value) {
+        return value;
+    },
+    NullLiteral() {
+        return null;
+    },
+    LogicalExpression(operator, left, right) {
+        return [operator, left, right];
     }
 };
 

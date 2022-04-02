@@ -205,11 +205,11 @@ class Parser {
 
     /**
      *  AssignmentExpression
-     *      : AdditiveExpression
+     *      : LogicalORExpression // Lowest precedence
      *      | LeftHandSideExpression AssignmentOperator AssignmentExpression
      */
     AssignmentExpression() {
-        const left = this.AdditiveExpression();
+        const left = this.LogicalORExpression();
 
         if (!this._isAssignmentOperator(this._lookahead.type)) {
             return left;
@@ -220,6 +220,25 @@ class Parser {
             this._checkValidAssignmentTarget(left),
             this.AssignmentExpression()
         );
+    }
+
+    /**
+     *  EqualityExpression
+     *      : RelationalExpression EQUALITY_OPERATOR EqualityExpression
+     *      | RelationalExpression
+     */
+    EqualityExpression() {
+        return this._BinaryExpression('RelationalExpression', 'EQUALITY_OPERATOR');
+    }
+
+    /**
+     *  RelationalExpression
+     *      : AdditiveExpression
+     *      | AdditiveExpression RELATIONAL_OPERATOR RelationalExpression
+     *      ;
+     */
+    RelationalExpression() {
+        return this._BinaryExpression('AdditiveExpression', 'RELATIONAL_OPERATOR');
     }
 
     /**
@@ -270,6 +289,30 @@ class Parser {
     }
 
     /**
+     *  Logical AND Expression
+     * 
+     *  LogicalANDExpression
+     *      : EqualityExpression LOGICAL_AND LogicalANDExpression
+     *      | EqualityExpression
+     *      ;
+     */
+    LogicalANDExpression() {
+        return this._LogicalExpression('EqualityExpression', 'LOGICAL_AND');
+    }
+
+    /**
+     *  Logical OR Expression
+     * 
+     *  LogicalORExpression
+     *      : LogicalANDExpression LOGICAL_OR LogicalORExpression
+     *      | LogicalORExpression
+     *      ;
+     */
+    LogicalORExpression() {
+        return this._LogicalExpression('LogicalANDExpression', 'LOGICAL_OR');
+    }
+
+    /**
      *  AdditiveExpression
      *      : MultiplicativeExpression
      *      | AdditiveExpression ADDITIVE_OPERAND MultiplicativeExpression
@@ -285,6 +328,22 @@ class Parser {
      */
     MultiplicativeExpression() {
         return this._BinaryExpression('PrimaryExpression', 'MULTIPLICATIVE_OPERATOR');
+    }
+
+    /**
+     *  Helper for LogicalExpression nodes
+     */
+    _LogicalExpression(builderName, operatorToken) {
+        let left = this[builderName]();
+
+        while (this._lookahead.type === operatorToken) {
+            const operator = this._eat(operatorToken).value;
+
+            const right = this[builderName]();
+
+            left = factory.LogicalExpression(operator, left, right);
+        }
+        return left;
     }
 
     /**
@@ -328,7 +387,13 @@ class Parser {
      *  @returns bool
      */
     _isLiteral(tokenType) {
-        return tokenType === 'NUMBER' || tokenType === 'STRING';
+        return (
+            tokenType === 'NUMBER' || 
+            tokenType === 'STRING' ||
+            tokenType === 'true'   ||
+            tokenType === 'false'  ||
+            tokenType === 'null'     
+        );
     }
 
 
@@ -348,6 +413,8 @@ class Parser {
      *  Literal
      *      : NumericLiteral
      *      | StringLiteral
+     *      | BooleanLiteral
+     *      | NullLiteral
      *      ;
      */
     Literal() {
@@ -356,8 +423,35 @@ class Parser {
                 return this.NumericLiteral();
             case 'STRING': 
                 return this.StringLiteral();
+            case 'true':
+                return this.BooleanLiteral(true);
+            case 'false':
+                return this.BooleanLiteral(false);
+            case 'null':
+                return this.NullLiteral();
         }
         throw new SyntaxError(`Literal: unexpected literal production "${this._lookahead.value || '<cannot read literal>'}"`);
+    }
+
+    /**
+     *  BooleanLiteral
+     *      : 'true'
+     *      | 'false'
+     *      ;
+     */
+    BooleanLiteral(value) {
+        this._eat(value ? 'true' : 'false');
+        return factory.BooleanLiteral(value);
+    }
+
+    /**
+     *  BooleanLiteral
+     *      : 'null'
+     *      ;
+     */
+    NullLiteral() {
+        this._eat('null');
+        return factory.NullLiteral();
     }
 
     /**
