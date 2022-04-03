@@ -24,7 +24,8 @@ const tests = [
     require('./function-declaration-test.js'),
     require('./member-test.js'),
     require('./call-test.js'),
-    require('./class-test.js')
+    require('./class-test.js'),
+    require('./combined-test.js')
 ]
 
 const parser = new Parser();

@@ -63,7 +63,7 @@ const Spec = [
     [/^\bthis\b/, 'this'],
 
     // Numbers: 
-    [/^\d+/, 'NUMBER'],
+    [/^(?![\.]?$)(?=\.?\d+)[\d]*\.?[\d]*(?:[e][\d]+)?(?=\W)/, 'NUMBER'],
 
     // Identifiers
     [/^[a-zA-Z_][a-zA-Z_0-9]*/, 'IDENTIFIER'],

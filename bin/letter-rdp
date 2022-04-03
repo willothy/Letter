@@ -2,14 +2,26 @@
 
 'use strict';
 
+Error.stackTraceLimit = 100;
+
 const { Parser } = require('../src/Parser');
 
 const fs = require('fs');
 
 function main(argv) {
-    const [_node, _path, mode, exp] = argv;
+    const [_node, _path, mode, exp, ...rest] = argv;
 
-    const parser = new Parser();
+    let listTokens = false;
+    if (rest.includes('-t') || rest.includes('--tokens')) {
+        listTokens = true;
+    }
+    let printStackTrace = false;
+    if (rest.includes('-s') || rest.includes('--stack')) {
+        printStackTrace = true;
+        // TODO: Implement parser stack trace
+    }
+
+    const parser = new Parser(listTokens);
 
     let ast = null;
     if (mode == '-e') {
@@ -19,7 +31,16 @@ function main(argv) {
         ast = parser.parse(src);
     }
 
-    console.log(JSON.stringify(ast, null, 2));
+    if (listTokens === true) {
+        console.log(JSON.stringify(parser.tokenList, null, 2));
+    }
+
+    if (rest.includes('-a') || rest.includes('--ast')) {
+        console.log(JSON.stringify(ast, null, 2));
+    }
+
+    
+    
 }
 
 main(process.argv);

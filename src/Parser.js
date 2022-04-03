@@ -11,30 +11,57 @@ class Parser {
      * Initializes the parser
      * 
      */
-    constructor() {
-        this._string = '';
+    constructor(listTokens) {
+        this._program = '';
         this._tokenizer = new Tokenizer();
+        this._listTokens = listTokens;
     }
 
     /**
-     * Parses string into an AST
-     * @param {*} string 
+     * Parser interface, 
+     * @param {string} program 
      * @returns ASTNode root
      */
-    parse(string) {
-        this._string = string;
-        this._tokenizer.init(string);
+    parse(program) {
+        const ast = this._parse(program);
+        
+        // TODO: Typechecking, other AST validation
+
+        return ast;
+    }
+
+    /**
+     * Helper function for abstraction of parse(), parses string into an AST
+     * @param {string} program 
+     * @returns ASTNode root
+     */
+    _parse(program) {
+        this._program = program;
+
+        // Special debug variable, list of all tokens. 
+        // Passed by sharing to the tokenizer, tokens are appended as they are read 
+        // if the -t flag is enabled
+        this.tokenList = [];
+
+        this._tokenizer.init(this._program, (this._listTokens === true ? this.tokenList : null));
 
         // Prime the tokenizer to obtain the first token
         // which is our lookahead. The lookahead is
         // used for predictive parsing.
 
         this._lookahead = this._tokenizer.getNextToken();
-        
 
         // Parse recursively starting from the Program entry point
 
         return this.Program();
+    }
+
+    /**
+     * Helper function to run at the beginning of certain productions which require lookahead. 
+     * @returns {void}
+     */
+    _precheck() {
+        
     }
 
     /**
@@ -450,7 +477,7 @@ class Parser {
     _checkValidAssignmentTarget(node) {
         if (node.type === 'Identifier' || node.type === 'MemberExpression') return node;
 
-        throw new SyntaxError(`Invalid left-hand side in assignment expression at line "${this._lineno}", col "${this._colno}"`);
+        throw new SyntaxError(`Invalid left-hand side in assignment`);
     }
 
     /**
@@ -648,6 +675,7 @@ class Parser {
      *      ;
      */
     MemberExpression() {
+        //this._precheck();
         let object = this.PrimaryExpression();
 
         while (this._lookahead.type === '.' || this._lookahead.type === '[') {
@@ -776,7 +804,7 @@ class Parser {
             case 'null':
                 return this.NullLiteral();
         }
-        throw new SyntaxError(`Literal: unexpected literal production "${this._lookahead.value}" at line "${this._lineno}", col "${this._colno}"`);
+        throw new SyntaxError(`Literal: unexpected literal production "${this._lookahead.value}"`);
     }
 
     /**
@@ -835,22 +863,18 @@ class Parser {
 
         if (token == null) {
             throw new SyntaxError(
-                `Unexpected end of input, expected: "${tokenType}" at line "${this._lineno}", col "${this._colno}"`
+                `Unexpected end of input, expected: "${tokenType}"`
             );
         }
 
         if (token.type !== tokenType) {
             throw new SyntaxError(
-                `Unexpected token: "${token.value}", expected: "${tokenType}" at line "${this._lineno}", col "${this._colno}"`
+                `Unexpected token: "${token.value}", expected: "${tokenType}"`
             );
         }
 
         // Advance parser to next token
         this._lookahead = this._tokenizer.getNextToken();
-        if (this._lookahead != null) {
-            this._lineno = this._lookahead.lineno;
-            this._colno = this._lookahead.colno;
-        }
         return token;
     }
 }

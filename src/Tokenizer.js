@@ -9,11 +9,13 @@ class Tokenizer {
      * Initializes the string
      * @param {*} string 
      */
-    init(string) {
-        this._string = string;
+    init(string, tokenList=null) {
+        this._program = string;
         this._cursor = 0;
-        this._lineno = 0;
-        this._colno = 0;
+
+        // Special debug variable, list of all tokens. TODO: toggle with -t/--tokens flag
+        // Passed by sharing from the parser, then returned
+        this._tokenList = tokenList;
     }
 
     /**
@@ -21,7 +23,7 @@ class Tokenizer {
      * @returns bool
      */
     hasMoreTokens() {
-        return this._cursor < this._string.length;
+        return this._cursor < this._program.length;
     }
 
     /**
@@ -29,7 +31,7 @@ class Tokenizer {
      * @returns boolean
      */
     isEOF() {
-        return this._cursor === this._string.length;
+        return this._cursor === this._program.length;
     }
 
     /**
@@ -40,7 +42,7 @@ class Tokenizer {
             return null;
         }
 
-        const string = this._string.slice(this._cursor);
+        const string = this._program.slice(this._cursor);
         // Recognize tokens
 
         for (const [regexp, tokenType] of Spec) {
@@ -48,23 +50,22 @@ class Tokenizer {
             if (tokenValue == null) continue;
             
             if (tokenType == null) {
-                const newLine = /\n/.exec(string) != null;
-                if (newLine == true) {
-                    this._colno = 0;
-                    this._lineno++;
-                }
                 return this.getNextToken();
             }
-
+            // Push to token list
+            if (this._tokenList !== null) {
+                this._tokenList.push({
+                    type: tokenType,
+                    value: tokenValue
+                });
+            }
             return {
                 type: tokenType,
-                value: tokenValue,
-                lineno: this._lineno,
-                colno: this._colno
+                value: tokenValue
             };
         }
 
-        throw new SyntaxError(`Unexpected token: "${string[0]} at line "${this._lineno}", col "${this._colno}"`);
+        throw new SyntaxError(`Unexpected token: "${string[0]}"`);
     }
 
     _match(regexp, string) {
@@ -72,7 +73,6 @@ class Tokenizer {
         if (matched == null) return null;
         
         this._cursor += matched[0].length;
-        this._colno += matched[0].length;
         return matched[0];
     }
 }
