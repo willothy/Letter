@@ -61,7 +61,7 @@ class Parser {
      * @returns {void}
      */
     _precheck() {
-        
+        if (!this._tokenizer.hasMoreTokens()) throw new SyntaxError("Unexpected end of file.");
     }
 
     /**
@@ -675,7 +675,7 @@ class Parser {
      *      ;
      */
     MemberExpression() {
-        //this._precheck();
+        this._precheck();
         let object = this.PrimaryExpression();
 
         while (this._lookahead.type === '.' || this._lookahead.type === '[') {
