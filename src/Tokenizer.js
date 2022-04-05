@@ -9,11 +9,11 @@ class Tokenizer {
      * Initializes the string
      * @param {*} string 
      */
-    init(string, tokenList=null) {
+    init(string, tokenList) {
         this._program = string;
         this._cursor = 0;
 
-        // Special debug variable, list of all tokens. TODO: toggle with -t/--tokens flag
+        // Special variable, list of all tokens. Used for preprocessor and debug token printing
         // Passed by sharing from the parser, then returned
         this._tokenList = tokenList;
     }
@@ -35,9 +35,23 @@ class Tokenizer {
     }
 
     /**
+     * Consumes input and returns a list of all tokens
+     * @returns {String[]} tokens
+     */
+    exec(nulls=false) {
+        const tokens = [];
+        while(this.hasMoreTokens()) {
+            const tok = this.getNextToken(nulls);
+            if (tok == null) return tokens;
+            else tokens.push(tok);
+        }
+        return tokens;
+    }
+
+    /**
      * Gets the next token
      */
-    getNextToken() {    
+    getNextToken(nulls=false) {    
         if (!this.hasMoreTokens()) {
             return null;
         }
@@ -48,8 +62,14 @@ class Tokenizer {
         for (const [regexp, tokenType] of Spec) {
             const tokenValue = this._match(regexp, string);
             if (tokenValue == null) continue;
-            
+
             if (tokenType == null) {
+                if (nulls == true) {
+                    return {
+                        type: tokenType,
+                        value: tokenValue
+                    };
+                }
                 return this.getNextToken();
             }
             // Push to token list
@@ -68,11 +88,16 @@ class Tokenizer {
         throw new SyntaxError(`Unexpected token: "${string[0]}"`);
     }
 
+    /**
+     * 
+     * @param {RegExp} regexp 
+     * @param {String} string 
+     * @returns {String} match or null
+     */
     _match(regexp, string) {
         let matched = regexp.exec(string);
         if (matched == null) return null;
-        
-        this._cursor += matched[0].length;
+        this._cursor += matched[0].length; // Advance cursor
         return matched[0];
     }
 }

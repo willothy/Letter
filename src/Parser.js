@@ -1,5 +1,6 @@
 
 const {Tokenizer} = require('./Tokenizer');
+const {Preprocessor} = require('./Preprocessor');
 const {Factories} = require('./ASTFactories');
 
 const AST_MODE = 'default';
@@ -11,10 +12,11 @@ class Parser {
      * Initializes the parser
      * 
      */
-    constructor(listTokens) {
+    constructor(combineFiles=false) {
         this._program = '';
         this._tokenizer = new Tokenizer();
-        this._listTokens = listTokens;
+        this._preprocessor = new Preprocessor();
+        this._combineFiles = combineFiles;
     }
 
     /**
@@ -36,20 +38,25 @@ class Parser {
      * @returns ASTNode root
      */
     _parse(program) {
-        this._program = program;
+        this._program = this._preprocessor.exec(program);
+
+        if (this._combineFiles === true) {
+            console.log(this._program);
+        }
 
         // Special debug variable, list of all tokens. 
         // Passed by sharing to the tokenizer, tokens are appended as they are read 
         // if the -t flag is enabled
         this.tokenList = [];
 
-        this._tokenizer.init(this._program, (this._listTokens === true ? this.tokenList : null));
+        this._tokenizer.init(this._program, this.tokenList);
 
         // Prime the tokenizer to obtain the first token
         // which is our lookahead. The lookahead is
         // used for predictive parsing.
 
         this._lookahead = this._tokenizer.getNextToken();
+        this._last = null;
 
         // Parse recursively starting from the Program entry point
 
@@ -804,7 +811,7 @@ class Parser {
             case 'null':
                 return this.NullLiteral();
         }
-        throw new SyntaxError(`Literal: unexpected literal production "${this._lookahead.value}"`);
+        throw new SyntaxError(`Literal: unexpected literal production "${this._lookahead.value}", last: "${JSON.stringify(this._last, null, 2)}", next: ${JSON.stringify(this._tokenizer.exec()[0])}`);
     }
 
     /**
@@ -863,17 +870,18 @@ class Parser {
 
         if (token == null) {
             throw new SyntaxError(
-                `Unexpected end of input, expected: "${tokenType}"`
+                `Unexpected end of input, expected: "${tokenType}", last: "${JSON.stringify(this._last, null, 2)}", next: ${JSON.stringify(this._tokenizer.exec()[0])}`
             );
         }
 
         if (token.type !== tokenType) {
             throw new SyntaxError(
-                `Unexpected token: "${token.value}", expected: "${tokenType}"`
+                `Unexpected token: "${token.value}", expected: "${tokenType}", last: "${JSON.stringify(this._last, null, 2)}", next: ${JSON.stringify(this._tokenizer.exec()[0])}`
             );
         }
 
         // Advance parser to next token
+        this._last = this._lookahead;
         this._lookahead = this._tokenizer.getNextToken();
         return token;
     }

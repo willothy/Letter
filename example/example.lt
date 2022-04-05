@@ -1,0 +1,15 @@
+#dependency @./area.lt
+
+#define pi 3.1415926
+
+class Circle {
+    proc constructor (r) {
+        this.radius = r;
+    }
+
+    proc circumference() {
+        return 2 * this.radius() * pi;
+    }
+}
+
+let x = "";

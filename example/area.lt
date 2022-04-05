@@ -1,0 +1,3 @@
+proc area (radius) {
+    return pi * radius * radius;
+}

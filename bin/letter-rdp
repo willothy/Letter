@@ -11,18 +11,19 @@ Error.stackTraceLimit = 0; // Don't print js stack trace when --stack isn't enab
 function main(argv) {
     const [_node, _path, mode, exp, ...rest] = argv;
 
-    let listTokens = false;
-    if (rest.includes('-t') || rest.includes('--tokens')) {
-        listTokens = true;
-    }
     let printStackTrace = false;
+    let minify = false;
     if (rest.includes('-s') || rest.includes('--stack')) {
         printStackTrace = true;
         Error.stackTraceLimit = 100;
         // TODO: Implement parser stack trace
     }
 
-    const parser = new Parser(listTokens);
+    if (rest.includes('-m') || rest.includes('--minify')) {
+        minify = true;
+    }
+
+    const parser = new Parser(minify);
 
     let ast = null;
     if (mode == '-e') {
@@ -32,7 +33,7 @@ function main(argv) {
         ast = parser.parse(src);
     }
 
-    if (listTokens === true) {
+    if (rest.includes('-t') || rest.includes('--tokens')) {
         console.log(JSON.stringify(parser.tokenList, null, 2));
     }
 

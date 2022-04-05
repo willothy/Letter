@@ -5,6 +5,7 @@
 const Spec = [
     // Whitespace:
     [/^\s+/, null],
+    [/^\n+/, null],
 
     // Comments:
     //Single-Line comments:
@@ -12,6 +13,7 @@ const Spec = [
 
     // Multiline comments
     [/^\/\*[\s\S]*?\*\//, null],
+    
     
 
     // Symbols
@@ -62,15 +64,25 @@ const Spec = [
     [/^\bsuper\b/, 'super'],
     [/^\bthis\b/, 'this'],
 
+    // Preprocessor symbols:
+    [/^#dependency/, 'PRE_INCLUDE'],
+    [/^#define/, 'PRE_DEFINE'],
+
+    // Filename
+    [/\@[^\@\n]+/, 'FILENAME'],
+
     // Numbers: 
     [/^(?![\.]?$)(?=\.?\d+)[\d]*\.?[\d]*(?:[e][\d]+)?(?=\W*)/, 'NUMBER'],
 
     // Identifiers
     [/^[a-zA-Z_][a-zA-Z_0-9]*/, 'IDENTIFIER'],
-
+    
     // Strings:
     [/^"[^"]*"/, 'STRING'],
-    [/^'[^']*'/, 'STRING']
+    [/^'[^']*'/, 'STRING'],
+
+    // Multiline string
+    [/^`[^`]*`/m, 'STRING']
 ];
 
 module.exports = {Spec};
