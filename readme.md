@@ -5,7 +5,7 @@ Letter is an interpreter project built in JavaScript, based on lectures by Dmitr
 **Currently only the parser is functional, but the interpreter is in progress.**
 <br><br>
 Use:<br>
-From the same directory as `filename.lt`, run the parser using `./bin/letter.rdp -f filename.lt` or `./bin/letter.rdp -f "statement"`.
+Run the parser using `./bin/letter.rdp -f ./filename.lt` or `./bin/letter.rdp -f "statement"`.
 
 <br>
 
@@ -25,11 +25,11 @@ Sample programs and are included in the `/example/` folder.<br>
 As in many languages, Letter requires a semicolon after each statement. Note that this does *not* apply to braces enclosing code blocks
 <br><br>
 
-For example, `let x = 0;` requires a semicolon and will throw a syntax error without it, but if statements, loops, functions and classes do not require a postfix semicolon. The one exception is the `do while` loop, which does require a semicolon after the condition.
+For example, `let x = 0;` requires a semicolon and will throw a syntax error without it, but if statements, loops, functions and classes do not require a postfix semicolon. The one exception is the `do while` loop, which does require a semicolon after the closing parentheses of the condition.
 <br><br>
 
 ### Comments:
-Comments in letter are identical to JavaScript.
+Comments in Letter are identical to JavaScript.
 
     // This is a one-line comment
 
@@ -39,7 +39,7 @@ Comments in letter are identical to JavaScript.
 ### Primitive Types:
 Letter currently suppports strings, booleans, integer and floating point numbers, and a null value. <br>
 
-Numbers can be represented using scientific notation, such as `3e2` or `1.987e4`.
+Numbers can be represented using both standard and scientific notation, such as `3e2` or `1.987e4`. Note that Letter does not yet have support for the unary minus in the exponent in scientific notation.
 
 ### Variable Declaration & Assignment:  
 Letter is weeakly typed, so variables of any type can be declared using
@@ -92,9 +92,10 @@ Classes are declared nearly identically to JavaScript in Letter. Classes can inc
 
 
 ### The Preprocessor
-Letter has a preprocessor which acts similarly to that of C and C++. You can import files to Letter using the `#dependency` keyword, followed by `@` and the relative or absolute path to the file.<br><br>
-Example: `#dependency @./area.lt` as shown in `/example/example.lt` imports the contents of `area.lt` from the current folder. At the moment, the present working directory must be the same directory containing the files when the Letter parser is executed. This is not intended functionality, and I'm working on resolving it.<br><br>
+<br>Letter has a preprocessor which acts similarly to that of C and C++. You can import files to Letter using the `#dependency` keyword, followed by `@` and the relative or absolute path to the file.<br><br>
+Example: `#dependency @./area.lt` as shown in `/example/example.lt` imports the contents of `area.lt` from the current folder.<br>
 
+Note that the preprocessor does not **yet** check if a file has been imported twice, so if two different libraries depend on a single separate library, it is required to import the dependency in the main file, before the dependent libraries, instead of importing it within each library. <br><br>
 The Letter preprocessor also allows you to define constants. For example, the statement `#define pi 3.1415926` replaces every instance of the identifer `pi` with the numeric literal `3.1415926`. I am planning on extending this in the future to support more complex value replacements such as macro-ized functions.
 
-Preprocessor statements should not include postfix semicolons, and they are not expected by the parser.
+Preprocessor statements should not include postfix semicolons. Preprocessor statements which include semicolons may have undefined behavior.

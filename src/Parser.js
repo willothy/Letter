@@ -24,8 +24,8 @@ class Parser {
      * @param {string} program 
      * @returns ASTNode root
      */
-    parse(program) {
-        const ast = this._parse(program);
+    parse(program, filePath) {
+        const ast = this._parse(program, filePath);
         
         // TODO: Typechecking, other AST validation
 
@@ -37,8 +37,8 @@ class Parser {
      * @param {string} program 
      * @returns ASTNode root
      */
-    _parse(program) {
-        this._program = this._preprocessor.exec(program);
+    _parse(program, filePath) {
+        this._program = this._preprocessor.exec(program, filePath);
 
         if (this._combineFiles === true) {
             console.log(this._program);

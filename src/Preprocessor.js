@@ -1,15 +1,18 @@
 const { Tokenizer } = require("./Tokenizer");
 
-const fs = require('fs');
+const { readFileSync } = require('fs');
+const { join, resolve } = require('path');
 
 class PreprocessorError extends Error {}
 
 class Preprocessor {
     constructor() {
-        
+        this.tokenizer = new Tokenizer();
+        this._basePath = '';
     }
 
-    exec(mainFile) {
+    exec(mainFile, basePath) {
+        this._basePath = basePath;
         const prog = this.preprocess(mainFile);
         
         return prog.join(' ');;
@@ -27,7 +30,7 @@ class Preprocessor {
         return i;
     }
 
-    genLookahead (tokens, index) {
+    getLookahead (tokens, index) {
         const lookahead = [];
         for (let i = index+1; i < tokens.length && lookahead.length < 2; i++) {
             if (tokens[i].type != null) {
@@ -37,14 +40,21 @@ class Preprocessor {
         return lookahead;
     }
 
+    // Resolves path 
+    getDependencyPath (dep) {
+        return join(
+            this._basePath + '/', 
+            dep.trim().substr(1, dep.length-1) // remove @ symbol and whitespace
+        );
+    }
+
     preprocess(mainFile, _symbols=null) {
-        const tokenizer = new Tokenizer();
         let program = [];
         let includes = [];
         let symbols = _symbols ?? Object.create(null);
 
-        tokenizer.init(mainFile, null);
-        let tokens = tokenizer.exec(false);
+        this.tokenizer.init(mainFile, null);
+        let tokens = this.tokenizer.exec(false);
 
         for (var i = 0; i < tokens.length; i++) {
             let lookahead = [
@@ -62,8 +72,7 @@ class Preprocessor {
                 }            
             } else if (tokens[i].type === 'PRE_INCLUDE') {
                 if (lookahead[0].type === 'FILENAME') {
-                    /* .replace(/^"(.*)"$|^'(.*)'$/, '$1$2')*/
-                    let src = fs.readFileSync(lookahead[0].value.substr(1, lookahead[0].value.length-2), 'utf-8');
+                    let src = readFileSync(this.getDependencyPath(lookahead[0].value), 'utf-8'); 
                     includes.push(this.preprocess(src, symbols));
                     i+=1;
                 } else {

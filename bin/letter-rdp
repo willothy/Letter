@@ -4,12 +4,13 @@
 
 const { Parser } = require('../src/Parser');
 
-const fs = require('fs');
+const { readFileSync } = require('fs');
+const { dirname, resolve } = require('path');
 
 Error.stackTraceLimit = 0; // Don't print js stack trace when --stack isn't enabled
 
 function main(argv) {
-    const [_node, _path, mode, exp, ...rest] = argv;
+    const [_node, _path, mode, source, ...rest] = argv;
 
     let printStackTrace = false;
     let minify = false;
@@ -27,10 +28,10 @@ function main(argv) {
 
     let ast = null;
     if (mode == '-e') {
-        ast = parser.parse(exp);
+        ast = parser.parse(source, null);
     } else if (mode == '-f') {
-        const src = fs.readFileSync(exp, 'utf-8');
-        ast = parser.parse(src);
+        const program = readFileSync(source, 'utf-8');
+        ast = parser.parse(program, String(dirname(resolve(source))));
     }
 
     if (rest.includes('-t') || rest.includes('--tokens')) {
@@ -40,9 +41,6 @@ function main(argv) {
     if (rest.includes('-a') || rest.includes('--ast')) {
         console.log(JSON.stringify(ast, null, 2));
     }
-
-    
-    
 }
 
 main(process.argv);
