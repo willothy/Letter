@@ -12,6 +12,7 @@ Current flags available:
 - `-s, --stack`: Prints the full JS stack on error. Normally, errors just print the message without stack trace when no debug flags are set.
 - `-t, --tokens`: Prints a list of all tokens in the program, including from imported files.
 - `-a, --ast`: Prints the full program's AST representation in JSON.
+- `-d, --debug`: Prints each node type and operation as it's completed by the evaluator.
 - `-m, --minify`: Combines all code into one file, and turns it into one line.
     - Recommended use: `./bin/letter.rdp -f filename --minify > file.min.lt`
 
