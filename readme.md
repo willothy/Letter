@@ -1,11 +1,10 @@
 # Letter
 
 Letter is an interpreter project built in JavaScript, based on lectures by Dmitry Soshnikov.
-
-**Currently only the parser is functional, but the interpreter is in progress.**
-<br><br>
+Currently the evaluator only features simple arithmetic and variables, but more is coming soon.
+<br>
 Use:<br>
-Run the parser using `./bin/letter.rdp -f ./filename.lt` or `./bin/letter.rdp -f "statement"`.
+Run the interpreter using `./bin/letter.rdp -f ./filename.lt` or `./bin/letter.rdp -f "statement"`.<br>
 
 <br>
 
@@ -16,7 +15,7 @@ Current flags available:
 - `-m, --minify`: Combines all code into one file, and turns it into one line.
     - Recommended use: `./bin/letter.rdp -f filename --minify > file.min.lt`
 
-Sample programs and are included in the `/example/` folder.<br>
+Sample programs and are included in the `/example/` folder. Among these is the `working.lt` file, which will be updated for every feature that is pushed to show the current state of the language.<br>
 
 ## Syntax reference:
 <br>

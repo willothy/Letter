@@ -12,4 +12,6 @@ class Circle {
     }
 }
 
+Circle.circumference();
+
 let x = "";

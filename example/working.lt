@@ -1,0 +1,17 @@
+#dependency @./area.lt
+#define pi 3.1415926
+
+let str = "test";
+
+// radius is defined in area.lt
+let circumference = 2 * pi * radius; 
+
+let n = null;
+
+let b = true;
+let _b = false;
+
+let test = b == _b;
+
+// sets n to null, then initializes e to the value of n
+let e = n = null;

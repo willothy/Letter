@@ -3,6 +3,7 @@
 'use strict';
 
 const { Parser } = require('../src/Parser');
+const { Evaluator } = require('../src/Evaluator');
 
 const { readFileSync } = require('fs');
 const { dirname, resolve } = require('path');
@@ -14,17 +15,21 @@ function main(argv) {
 
     let printStackTrace = false;
     let minify = false;
+    let debugEval = false;
     if (rest.includes('-s') || rest.includes('--stack')) {
         printStackTrace = true;
         Error.stackTraceLimit = 100;
-        // TODO: Implement parser stack trace
+        // TODO: Implement evaluator stack trace
     }
 
-    if (rest.includes('-m') || rest.includes('--minify')) {
+    if (rest.includes('-m') || rest.includes('--minify')) 
         minify = true;
-    }
 
+    if (rest.includes('-d') || rest.includes('--debug')) 
+        debugEval = true;
+    
     const parser = new Parser(minify);
+    const evaluator = new Evaluator();
 
     let ast = null;
     if (mode == '-e') {
@@ -34,13 +39,14 @@ function main(argv) {
         ast = parser.parse(program, String(dirname(resolve(source))));
     }
 
-    if (rest.includes('-t') || rest.includes('--tokens')) {
+    if (rest.includes('-t') || rest.includes('--tokens')) 
         console.log(JSON.stringify(parser.tokenList, null, 2));
-    }
 
-    if (rest.includes('-a') || rest.includes('--ast')) {
+    if (rest.includes('-a') || rest.includes('--ast')) 
         console.log(JSON.stringify(ast, null, 2));
-    }
+
+    const result = evaluator.eval(ast);
+    console.log(result == 0 ? "Program finished successfully with exit code 0." : `Program exited with code: ${result}`);
 }
 
 main(process.argv);
