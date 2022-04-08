@@ -1,5 +1,10 @@
 # Letter 
 [![CodeQL](https://github.com/willothy/Letter/actions/workflows/codeql-analysis.yml/badge.svg?branch=main)](https://github.com/willothy/Letter/actions/workflows/codeql-analysis.yml)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=willothy_Letter&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=willothy_Letter)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=willothy_Letter&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=willothy_Letter)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=willothy_Letter&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=willothy_Letter)
+
+
 
 Letter is an interpreter project built in JavaScript, based on lectures by Dmitry Soshnikov.
 Currently the evaluator only features simple arithmetic and variables, but more is coming soon.
