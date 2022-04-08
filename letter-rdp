@@ -2,8 +2,8 @@
 
 'use strict';
 
-const { Parser } = require('../src/Parser');
-const { Evaluator } = require('../src/Evaluator');
+const { Parser } = require('./src/Parser');
+const { Evaluator } = require('./src/Evaluator');
 
 const { readFileSync } = require('fs');
 const { dirname, resolve } = require('path');
