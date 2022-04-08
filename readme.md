@@ -1,4 +1,5 @@
-# Letter
+# Letter 
+[![CodeQL](https://github.com/willothy/Letter/actions/workflows/codeql-analysis.yml/badge.svg?branch=main)](https://github.com/willothy/Letter/actions/workflows/codeql-analysis.yml)
 
 Letter is an interpreter project built in JavaScript, based on lectures by Dmitry Soshnikov.
 Currently the evaluator only features simple arithmetic and variables, but more is coming soon.
