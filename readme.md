@@ -4,7 +4,13 @@ Letter is an interpreter project built in JavaScript, based on lectures by Dmitr
 Currently the evaluator only features simple arithmetic and variables, but more is coming soon.
 <br>
 Use:<br>
-Run the interpreter using `./bin/letter.rdp -f ./filename.lt` or `./bin/letter.rdp -f "statement"`.<br>
+Letter can be run with one of the binaries provided on the [releases](https://github.com/willothy/Letter/releases/) page.
+Run the interpreter using `./letter -f ./filename.lt` or `./bin/letter.rdp -f "statement"`.<br>
+Alternatively, letter can be run directly from nodejs using `./letter-rdp` with the same syntax as above.<br>
+
+To build Letter from source, use `pkg`.
+`npm install -g pkg`
+`pkg ./letter-rdp -o letter`
 
 <br>
 
