@@ -1,7 +1,4 @@
 module.exports = test => {
-    // Addition:
-    // Left: 2
-    // Right: 2
     test(`2 + 2;`, {
         type: 'Program',
         body: [ 
@@ -23,8 +20,6 @@ module.exports = test => {
         ],
     });
 
-    // Left: 3 + 2
-    // Right: 2
     test(`3 + 2 - 2;`, {
         type: 'Program',
         body: [ 

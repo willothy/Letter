@@ -1,5 +1,5 @@
 
-class RuntimeError extends Error {};
+class RuntimeError extends Error {}
 
 class Evaluator {
     /**
@@ -27,8 +27,8 @@ class Evaluator {
         }
 
         if (node.type === 'BlockStatement') {
-            for (let i = 0; i < node.body.length; i++) {
-                this.eval(node.body[i], local);
+            for (const stmt of node.body) {
+				this.eval(stmt, local);
             }
             return;
         }
@@ -153,7 +153,7 @@ class Evaluator {
         }
 
         if (node.type === 'IfStatement') {
-            if (this.eval(node.test, local) == true) {
+            if (this.eval(node.test, local) ) {
                 this.eval(node.consequent, local);
             } else {
                 this.eval(node.alternate, local);
@@ -162,9 +162,9 @@ class Evaluator {
 
         if (node.type === 'LogicalExpression') {
             if (node.operator == '&&') {
-                return this.eval(node.left, local) == true && this.eval(node.right, local) == true;
+                return this.eval(node.left, local)  && this.eval(node.right, local) ;
             } else if (node.operator == '||') {
-                return this.eval(node.left, local) == true || this.eval(node.right, local) == true;
+                return this.eval(node.left, local)  || this.eval(node.right, local) ;
             }
         }
 

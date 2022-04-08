@@ -153,11 +153,11 @@ const JSONFactory = {
             property
         };
     },
-    CallExpression(callee, arguments) {
+    CallExpression(callee, args) {
         return {
             type: 'CallExpression',
             callee,
-            arguments
+            args
         };
     },
     ClassDeclaration(id, superClass, body) {
@@ -178,11 +178,11 @@ const JSONFactory = {
             type: 'Super'
         };
     },
-    NewExpression(callee, arguments) {
+    NewExpression(callee, args) {
         return {
             type: 'NewExpression',
             callee,
-            arguments
+            args
         };
     }
 };
@@ -193,7 +193,9 @@ const SExpressionFactory = {
     Program(body) {
         return ['begin', body];
     },
-    EmptyStatement() {},
+    EmptyStatement() {
+		return ['empty'];
+    },
     BlockStatement(body) {
         return ['begin', body];
     },
@@ -276,11 +278,11 @@ const SExpressionFactory = {
             property
         ];
     },
-    CallExpression(callee, arguments) {
+    CallExpression(callee, args) {
         return [
             'call',
             callee,
-            arguments
+            args
         ];
     },
     ClassDeclaration(id, superClass, body) {
@@ -297,11 +299,11 @@ const SExpressionFactory = {
     Super() {
         return 'super';
     },
-    NewExpression(callee, arguments) {
+    NewExpression(callee, args) {
         return [
             'new',
             callee,
-            arguments
+            args
         ];
     }
 };

@@ -15,7 +15,7 @@ class Preprocessor {
         this._basePath = basePath;
         const prog = this.preprocess(mainFile);
         
-        return prog.join(' ');;
+        return prog.join(' ');
     }
 
     /**
@@ -48,11 +48,20 @@ class Preprocessor {
         );
     }
 
-    preprocess(mainFile, _symbols=null) {
+	/**
+	*  Adds dependency files to the program
+	*/
+    addIncludes(includes, program) {
+		for (const include of includes)
+			program = [].concat(include, programm);
+		return program;
+    }
+
+    preprocess(mainFile, _symbols=Object.create(null)) {
         let program = [];
         let includes = [];
-        let symbols = _symbols ?? Object.create(null);
-
+        let symbols = _symbols;
+        
         this.tokenizer.init(mainFile, null);
         let tokens = this.tokenizer.exec(false);
 
@@ -86,9 +95,7 @@ class Preprocessor {
             }
         }
 
-        for (const include of includes) {
-            program = [].concat(include, program);
-        }
+        program = addIncludes(includes, program);
         
         return program;
     }

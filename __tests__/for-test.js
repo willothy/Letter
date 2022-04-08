@@ -17,7 +17,7 @@ module.exports = test => {
                         {
                             type: 'VariableDeclaration',
                             id: {
-                                name: 'Identifier',
+                                type: 'Identifier',
                                 name: 'i'
                             },
                             init: {
