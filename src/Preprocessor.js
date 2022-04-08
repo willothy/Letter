@@ -53,7 +53,7 @@ class Preprocessor {
 	*/
     addIncludes(includes, program) {
 		for (const include of includes)
-			program = [].concat(include, programm);
+			program = [].concat(include, program);
 		return program;
     }
 
@@ -95,7 +95,7 @@ class Preprocessor {
             }
         }
 
-        program = addIncludes(includes, program);
+        program = this.addIncludes(includes, program);
         
         return program;
     }
