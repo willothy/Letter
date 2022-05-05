@@ -4,7 +4,7 @@
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=willothy_Letter&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=willothy_Letter)
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=willothy_Letter&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=willothy_Letter)
 
-Note: I'm in the process of a rework of Letter to allow for compilation with llvm using the llvm-bindings module.
+Note: I'm in the process of a rework of Letter to allow for compilation with llvm using the llvm-bindings module. Therefore, the rest of this readme applies only to commits up to 5/5/2022. I will update this readme with new changes soon.
 
 Letter is an interpreter project built in JavaScript, based on lectures by Dmitry Soshnikov.
 Currently the evaluator only features simple arithmetic and variables, but more is coming soon.

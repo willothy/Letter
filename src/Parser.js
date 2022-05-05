@@ -774,10 +774,11 @@ class Parser {
      */
     _isLiteral(tokenType) {
         return (
-            tokenType === 'NUMBER' || 
-            tokenType === 'STRING' ||
-            tokenType === 'true'   ||
-            tokenType === 'false'  ||
+            tokenType === 'INTEGER' || 
+            tokenType === 'FLOAT'   || 
+            tokenType === 'STRING'  ||
+            tokenType === 'true'    ||
+            tokenType === 'false'   ||
             tokenType === 'null'     
         );
     }
@@ -805,8 +806,10 @@ class Parser {
      */
     Literal() {
         switch(this._lookahead.type) {
-            case 'NUMBER': 
-                return this.NumericLiteral();
+            case 'FLOAT':
+                return this.NumericLiteral(this._lookahead.type);
+            case 'INTEGER': 
+                return this.NumericLiteral(this._lookahead.type);
             case 'STRING': 
                 return this.StringLiteral();
             case 'true':
@@ -858,10 +861,15 @@ class Parser {
      *      : NUMBER
      *      ;
      */
-    NumericLiteral() {
-        const token = this._eat('NUMBER');
+    NumericLiteral(type) {
+        let token;
+        if (type === 'INTEGER')
+            token = this._eat('INTEGER');
+        else if (type === 'FLOAT')
+            token = this._eat('FLOAT');
         return {
             type: 'NumericLiteral',
+            valType: type,
             value: Number(token.value),
         };
     }

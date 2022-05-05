@@ -50,7 +50,7 @@ function main(argv) {
     if (rest.includes('-a') || rest.includes('--ast')) 
         console.log(JSON.stringify(ast, null, 2));
 
-    if (rest.includes('-c') || rest.includes('--compile')) {
+    if (rest.includes('-i') || rest.includes('--emit-ir')) {
         const result = compiler.compile(ast);//evaluator.eval(ast);
         console.log(result);
     }

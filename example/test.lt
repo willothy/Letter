@@ -1,5 +1,4 @@
 #dependency @./area.lt
+#define pi 3.1415926
 
-let int test = radius + 2;
-
-test = test + radius;
+let float circumference = 5.0;

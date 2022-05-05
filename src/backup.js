@@ -1,14 +1,6 @@
 const { ConstantInt, PointerType, APInt, APFloat } = require('llvm-bindings');
 const llvm = require('llvm-bindings');
 
-class CompilerError extends Error {}
-class TypeError extends CompilerError {}
-
-// https://stackoverflow.com/a/28191966/6884167
-function getKeyByValue(object, value) {
-    return Object.keys(object).find(key => object[key] === value);
-}
-
 class Compiler {
 
     context;
@@ -43,7 +35,7 @@ class Compiler {
             case 'bool':
                 return new llvm.APInt(1, parseInt(`${value}`), false);
             case 'float':
-                return new llvm.ConstantFP.get(this.builder.getFloatTy(), parseFloat(value), true);
+                return new llvm.ConstantFP.get(this.builder.getFloatTy(), parseFloat(value));
             case 'double':
                 return new llvm.APFloat(parseFloat(`${value}`));
             case 'char':
@@ -58,37 +50,6 @@ class Compiler {
         );
         this.codegen(ast);
         return this.module.print();
-    }
-
-    checkType(value, expectedType) {
-        if (!llvm.Type.isSameType(value.getType(), expectedType)) {
-            let exp = getKeyByValue(llvm.Type.TypeID, expectedType.getTypeID());
-            exp = exp.substring(0, exp.length-4);
-
-            let got = getKeyByValue(llvm.Type.TypeID, value.getType().getTypeID());
-            got = got.substring(0, got.length-4)
-
-            let m = `Expected type ${
-                exp
-            }, got ${
-                got
-            }`;
-            throw new TypeError(m);
-        }
-        return value;
-    }
-
-    isFloat(val) {
-        try {
-            const test = val.getType().isFloatingPointTy();
-            return true;
-        } catch (e) {
-            return false;
-        }
-    }
-
-    isInteger(val) {
-        return val.getType().isIntegerTy(32);
     }
 
     codegen(ast, symbols = {}) {
@@ -123,23 +84,16 @@ class Compiler {
                         type: type,
                         alloc: alloc
                     }
-                    this.builder.CreateStore(
-                        this.checkType(
-                            this.codegen(declaration.init, symbols),
-                            type
-                        ),
-                        alloc
-                    );
+                    this.builder.CreateStore(this.codegen(declaration.init, symbols), alloc);
                 }
             }
         }
         if (current.type === 'NumericLiteral') {
             //return llvm.ConstantFP.get(this.builder.getFloatTy(), current.value);
-            
-            if (current.valType === 'INTEGER')
-                return llvm.ConstantInt.get(this.builder.getInt32Ty(), current.value, true);
+            if (current.value % 1 === 0)
+                return llvm.ConstantInt.get(this.builder.getInt32Ty(), current.value);
             else
-                return llvm.ConstantFP.get(this.builder.getFloatTy(), current.value, true);
+                return llvm.ConstantFP.get(this.builder.getFloatTy(), current.value);
         }
         if (current.type === 'Identifier') {
             const info = symbols[current.name];
@@ -149,14 +103,17 @@ class Compiler {
             let left = this.codegen(current.left, symbols);
             let right = this.codegen(current.right, symbols);
 
+            console.log(current.left, left);
+            console.log(current.right, right);
+
             const float = this.builder.getFloatTy();
             const int = this.builder.getInt32Ty();
 
             const leftType = left.getType();
             const rightType = right.getType();
             
-            if (llvm.Type.isSameType(leftType, rightType)) {
-                if (leftType.isIntegerTy(32)) {
+            if (llvm.Type.isSameType(left.getType(), right.getType())) {
+                if (leftType === int) {
                     if (current.operator === '+') {
                         return this.builder.CreateAdd(left, right, 'addtmp');
                     } else if (current.operator === '-') {
@@ -166,7 +123,7 @@ class Compiler {
                     } else if (current.operator === '/') {
                         return this.builder.CreateSDiv(left, right, 'divtmp');
                     }
-                } else {
+                } else if (leftType === float) {
                     if (current.operator === '+') {
                         return this.builder.CreateFAdd(left, right, 'faddtmp');
                     } else if (current.operator === '-') {
@@ -178,7 +135,7 @@ class Compiler {
                     }
                 }
             } else {
-                if (this.isFloat(left) || this.isFloat(right)) {
+                if (leftType === float || rightType === float && leftType === int || rightType === int) {
                     left = leftType === int ? left : this.builder.CreateSIToFP(
                         left, 
                         this.builder.getFloatTy(), 
@@ -198,10 +155,20 @@ class Compiler {
                     } else if (current.operator === '/') {
                         return this.builder.CreateFDiv(left, right, 'fdivtmp');
                     }
-                } else {
-                    throw new Error("Cannot convert between types");
                 }
             }
+        }
+    }
+
+    functionDefCodegen(functionName, returnType, paramTypes=[]) {
+        const functionType = llvm.FunctionType.get(returnType, paramTypes, false);
+        const func = llvm.Function.Create(functionType, llvm.Function.LinkageTypes.ExternalLinkage, functionName, this.module);
+
+        const entry = llvm.BasicBlock.Create(this.context, 'entry', func);
+        this.builder.SetInsertPoint(entry);
+        const args = [];
+        for (let i = 0; i < paramTypes.length; i++) {
+            args.push(func.getArg(i));
         }
     }
 
