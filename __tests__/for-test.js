@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 module.exports = test => {
     test(`
     
@@ -100,3 +101,107 @@ module.exports = test => {
         ]
     });
 };
+=======
+module.exports = test => {
+    test(`
+    
+        for (let i = 0; i < 10; i += 1) {
+            x += 1;
+        }
+    
+    `, {
+        // Expected AST goes here
+        type: 'Program',
+        body: [
+            {
+                type: 'ForStatement',
+                init: {
+                    type: 'VariableStatement',
+                    declarations: [
+                        {
+                            type: 'VariableDeclaration',
+                            id: {
+                                type: 'Identifier',
+                                name: 'i'
+                            },
+                            init: {
+                                type: 'NumericLiteral',
+                                value: 0
+                            }
+                        }
+                    ]
+                },
+                test: {
+                    type: 'BinaryExpression',
+                    operator: '<',
+                    left: {
+                        type: 'Identifier',
+                        name: 'i'
+                    },
+                    right: {
+                        type: 'NumericLiteral',
+                        value: 10
+                    },
+                },
+                update: {
+                    type: 'AssignmentExpression',
+                    left: {
+                        type: 'Identifier',
+                        name: 'i'
+                    },
+                    operator: '+=',
+                    right: {
+                        type: 'NumericLiteral',
+                        value: 1
+                    }
+                },
+                body: {
+                    type: 'BlockStatement',
+                    body: [
+                        {
+                            type: 'ExpressionStatement',
+                            expression: {
+                                type: 'AssignmentExpression',
+                                left: {
+                                    type: 'Identifier',
+                                    name: 'x'
+                                },
+                                operator: '+=',
+                                right: {
+                                    type: 'NumericLiteral',
+                                    value: 1
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        ]
+    });
+
+
+    test(`
+    
+        for (; ;) {
+            
+        }
+    
+    `, {
+        type: 'Program',
+        body: [
+            {
+                type: 'ForStatement',
+                init: null,
+                test: null,
+                update: null,
+                body: {
+                    type: 'BlockStatement',
+                    body: [
+    
+                    ]
+                }
+            }
+        ]
+    });
+};
+>>>>>>> c5e1807b4455b040b9da8ac3debb5119fbe74b60

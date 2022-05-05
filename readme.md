@@ -1,4 +1,8 @@
 # Letter
+[![CodeQL](https://github.com/willothy/Letter/actions/workflows/codeql-analysis.yml/badge.svg?branch=main)](https://github.com/willothy/Letter/actions/workflows/codeql-analysis.yml)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=willothy_Letter&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=willothy_Letter)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=willothy_Letter&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=willothy_Letter)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=willothy_Letter&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=willothy_Letter)
 
 Note: I'm in the process of a rework of Letter to allow for compilation with llvm using the llvm-bindings module.
 
