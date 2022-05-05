@@ -1,5 +1,7 @@
 # Letter
 
+Note: I'm in the process of a rework of Letter to allow for compilation with llvm using the llvm-bindings module.
+
 Letter is an interpreter project built in JavaScript, based on lectures by Dmitry Soshnikov.
 Currently the evaluator only features simple arithmetic and variables, but more is coming soon.
 <br>

@@ -46,13 +46,22 @@ const Spec = [
     [/^[+\-]/, 'ADDITIVE_OPERATOR'],
     [/^[*\/]/, 'MULTIPLICATIVE_OPERATOR'],
 
+    // Primitive Types:
+    [/^\bint\b/, 'PRIMITIVE'],
+    [/^\bfloat\b/, 'PRIMITIVE'],
+    [/^\bdouble\b/, 'PRIMITIVE'],
+    [/^\bchar\b/, 'PRIMITIVE'],
+    [/^\bbool\b/, 'PRIMITIVE'],
+
+    // Constant value keywords
+    [/^\btrue\b/, 'true'],
+    [/^\bfalse\b/, 'false'],
+    [/^\bnull\b/, 'null'],
+
     // Keywords:
     [/^\blet\b/, 'let'],
     [/^\bif\b/, 'if'],
     [/^\belse\b/, 'else'],
-    [/^\btrue\b/, 'true'],
-    [/^\bfalse\b/, 'false'],
-    [/^\bnull\b/, 'null'],
     [/^\bwhile\b/, 'while'],
     [/^\bdo\b/, 'do'],
     [/^\bfor\b/, 'for'],

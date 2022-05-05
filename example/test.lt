@@ -1,0 +1,3 @@
+#dependency @./area.lt
+
+let int test = radius + 2;

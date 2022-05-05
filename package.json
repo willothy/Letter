@@ -10,6 +10,7 @@
   "author": "",
   "license": "GPLv2",
   "dependencies": {
-    "assert": "^2.0.0"
+    "assert": "^2.0.0",
+    "llvm-bindings": "^0.3.7"
   }
 }

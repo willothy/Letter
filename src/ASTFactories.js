@@ -60,10 +60,11 @@ const JSONFactory = {
             declarations,
         };
     },
-    VariableDeclaration(id, init) {
+    VariableDeclaration(id, type, init) {
         return {
             type: 'VariableDeclaration',
-            id,
+            id: id,
+            valType: type,
             init
         }
     },

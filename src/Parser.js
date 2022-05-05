@@ -360,12 +360,17 @@ class Parser {
      *      : Identifier OptVariableInitializer
      */
     VariableDeclaration() {
+        const type = this.Type();
         const id = this.Identifier();
 
         const init = this._lookahead.type !== ';' && this._lookahead.type !== ',' 
             ? this.VariableInitializer() : null;
 
-        return factory.VariableDeclaration(id, init);
+        return factory.VariableDeclaration(id, type, init);
+    }
+
+    Type() {
+        return this._eat('PRIMITIVE').value;
     }
 
     /**

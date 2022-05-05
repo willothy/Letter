@@ -4,9 +4,10 @@
 
 const { Parser } = require('./src/Parser');
 const { Evaluator } = require('./src/Evaluator');
+const { Compiler } = require('./src/Compiler');
 
 const { readFileSync } = require('fs');
-const { dirname, resolve } = require('path');
+const { dirname, resolve, basename } = require('path');
 
 Error.stackTraceLimit = 0; // Don't print js stack trace when --stack isn't enabled
 
@@ -29,15 +30,19 @@ function main(argv) {
         debugEval = true;
     
     const parser = new Parser(minify);
-    const evaluator = new Evaluator();
+    //const evaluator = new Evaluator();
 
     let ast = null;
+    let moduleName = '';
     if (mode == '-e') {
         ast = parser.parse(source, null);
     } else if (mode == '-f') {
         const program = readFileSync(source, 'utf-8');
+        moduleName = basename(source, '.lt');
         ast = parser.parse(program, String(dirname(resolve(source))));
     }
+
+    const compiler = new Compiler(moduleName);
 
     if (rest.includes('-t') || rest.includes('--tokens')) 
         console.log(JSON.stringify(parser.tokenList, null, 2));
@@ -45,8 +50,12 @@ function main(argv) {
     if (rest.includes('-a') || rest.includes('--ast')) 
         console.log(JSON.stringify(ast, null, 2));
 
-    const result = evaluator.eval(ast);
-    console.log(result == 0 ? "Program finished successfully with exit code 0." : `Program exited with code: ${result}`);
+    if (rest.includes('-c') || rest.includes('--compile')) {
+        const result = compiler.compile(ast);//evaluator.eval(ast);
+        console.log(result);
+    }
+    
+    //console.log(result == 0 ? "Program finished successfully with exit code 0." : `Program exited with code: ${result}`);
 }
 
 main(process.argv);
