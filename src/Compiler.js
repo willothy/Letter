@@ -1,4 +1,4 @@
-const { ConstantInt, PointerType, APInt, APFloat } = require('llvm-bindings');
+const { ConstantInt, PointerType, APInt, APFloat, LoadInst } = require('llvm-bindings');
 const llvm = require('llvm-bindings');
 
 class CompilerError extends Error {}
@@ -93,20 +93,30 @@ class Compiler {
 
     codegen(ast, symbols = {}) {
         let current = ast;
-        
+
         if (current.type === 'Program') {
             const mainReturnType = llvm.FunctionType.get(this.builder.getInt32Ty(), [], false);
-            const main = llvm.Function.Create(mainReturnType, llvm.Function.LinkageTypes.ExternalLinkage, 'main', this.module);
+            const main = llvm.Function.Create(mainReturnType, llvm.Function.LinkageTypes.ExternalLinkage, 'test', this.module);
             const mainEntry = llvm.BasicBlock.Create(this.context, 'entry', main);
             this.builder.SetInsertPoint(mainEntry);
 
             for (const statement of current.body) {
                 this.codegen(statement, symbols);
             }
-
+            //console.log(symbols)
             const info = symbols.circumference; 
 
-            this.builder.CreateCall(this.module.getFunction('printf'), [this.builder.CreateGlobalStringPtr("%d\n"), this.builder.CreateLoad(info.type, info.alloc, 'tmp')], 'printCall')
+            const load = this.builder.CreateLoad(info.type, info.alloc, 'tmp');
+            //console.log(getKeyByValue(llvm.Type.TypeID, load.getType().getTypeID()));
+
+            this.builder.CreateCall(
+                this.module.getFunction('printf'), 
+                [
+                    this.builder.CreateGlobalStringPtr("%f\n"), 
+                    this.builder.CreateFPExt(load, this.builder.getDoubleTy(), 'tmp')
+                ], 
+                'printCall'
+            );
             this.builder.CreateRet(ConstantInt.get(this.builder.getInt32Ty(), 0, false));
         }
         if (current.type === 'VariableStatement') {
@@ -149,9 +159,6 @@ class Compiler {
             let left = this.codegen(current.left, symbols);
             let right = this.codegen(current.right, symbols);
 
-            const float = this.builder.getFloatTy();
-            const int = this.builder.getInt32Ty();
-
             const leftType = left.getType();
             const rightType = right.getType();
             
@@ -179,12 +186,12 @@ class Compiler {
                 }
             } else {
                 if (this.isFloat(left) || this.isFloat(right)) {
-                    left = leftType === int ? left : this.builder.CreateSIToFP(
+                    left = this.isFloat(left) ? left : this.builder.CreateSIToFP(
                         left, 
                         this.builder.getFloatTy(), 
                         'convleft'
                     );
-                    right = rightType === int ? right : this.builder.CreateSIToFP(
+                    right = this.isFloat(right) ? right : this.builder.CreateSIToFP(
                         right, 
                         this.builder.getFloatTy(), 
                         'convright'
