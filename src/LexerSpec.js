@@ -55,6 +55,7 @@ const Spec = [
     [/^\btrue\b/, 'true'],
     [/^\bfalse\b/, 'false'],
     [/^\bnull\b/, 'null'],
+    [/^\bvoid\b/, 'void'],
 
     // Keywords:
     [/^\blet\b/, 'let'],

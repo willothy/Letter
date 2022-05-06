@@ -14,7 +14,7 @@ class Preprocessor {
     exec(mainFile, basePath) {
         this._basePath = basePath;
         const prog = this.preprocess(mainFile);
-        
+        //console.log(prog.join(' '));
         return prog.join(' ');;
     }
 

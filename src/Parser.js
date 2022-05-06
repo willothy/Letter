@@ -170,7 +170,20 @@ class Parser {
      */
     FunctionDeclaration() {
         this._eat('proc');
-        const type = this.Type();
+        let _type;
+        if (this._lookahead.type === 'void') {
+            _type = {
+                type: 'void',
+                typeStr: 'void',
+                arrayType: false,
+                dimensions: 0,
+            };
+            this._eat('void');
+        } else {
+            _type = this.Type();
+        }
+        
+        const type = _type;
         const name = this.Identifier();
 
         this._eat('(');

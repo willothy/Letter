@@ -20,6 +20,12 @@ Features that are working now:
 - String, Float, Double, and Integer literals
 
 Here's an example of a working program in Letter: <br>
+Math library:
+
+    // math.lt
+
+    #define pi 3.1415926
+
 Print library:
     
     // print.lt
@@ -38,7 +44,7 @@ Main program file:
     // main.lt
 
     #dependency @./print.lt
-    #define pi 3.1415926
+    #dependency @./math.lt
 
     proc int main() {
         let int radius = 2;

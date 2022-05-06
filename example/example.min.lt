@@ -1,1 +1,0 @@
-proc area ( radius ) { return pi * radius * radius ; } class Circle { proc constructor ( r ) { this . radius = r ; } proc circumference ( ) { return 2 * this . radius ( ) * 3.1415926 ; } } let x = "" ;

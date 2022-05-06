@@ -143,7 +143,7 @@ class Compiler {
         });
     }
 
-    codegen(ast, symbols = {}) {
+    codegen(ast, symbols = {}, fn=null) {
         let current = ast;
 
         if (current.type === 'Program') {
@@ -159,8 +159,10 @@ class Compiler {
                 this.codegen(statement, symbols);
             }
         }
+        if (current.type === 'ReturnStatement') {
+            this.builder.CreateRet(this.codegen(current.argument));
+        }
         if (current.type === 'FunctionDeclaration') {
-            
             const params = [];
             const paramSymbols = [];
             for (const param of current.params) {
@@ -174,7 +176,12 @@ class Compiler {
                 }
             }
             
-            let returnType = this.resolveFuncType(current.returnType);
+            let returnType;
+            if (current.returnType.type === 'void') {
+                returnType = this.builder.getVoidTy();
+            } else {
+                returnType = this.resolveFuncType(current.returnType);
+            }
             
             const funcType = llvm.FunctionType.get(returnType, params, false);
             const func = llvm.Function.Create(
@@ -199,8 +206,9 @@ class Compiler {
             this.codegen(current.body, {
                 ...symbols, 
                 ...locals
-            });
-            this.builder.CreateRet(this.builder.getInt32(0));
+            }, func);
+            if (current.returnType.type === 'void')
+                this.builder.CreateRetVoid();
         }
         if (current.type === 'ExpressionStatement') {
             return this.codegen(current.expression, symbols);
@@ -212,8 +220,7 @@ class Compiler {
             }
             return this.builder.CreateCall(
                 this.module.getFunction(current.callee.name), 
-                callArgs, 
-                current.callee.name + '_call'
+                callArgs
             );
         }
         if (current.type === 'ExternDeclaration') {
