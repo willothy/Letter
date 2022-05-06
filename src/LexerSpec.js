@@ -14,8 +14,6 @@ const Spec = [
     // Multiline comments
     [/^\/\*[\s\S]*?\*\//, null],
     
-    
-
     // Symbols
     [/^;/, ';'],
     [/^\{/, '{'],
@@ -47,11 +45,11 @@ const Spec = [
     [/^[*\/]/, 'MULTIPLICATIVE_OPERATOR'],
 
     // Primitive Types:
-    [/^\bint\b/, 'PRIMITIVE'],
-    [/^\bfloat\b/, 'PRIMITIVE'],
-    [/^\bdouble\b/, 'PRIMITIVE'],
-    [/^\bchar\b/, 'PRIMITIVE'],
-    [/^\bbool\b/, 'PRIMITIVE'],
+    [/^\bint\b/, 'TYPE'],
+    [/^\bfloat\b/, 'TYPE'],
+    [/^\bdouble\b/, 'TYPE'],
+    [/^\bchar\b/, 'TYPE'],
+    [/^\bbool\b/, 'TYPE'],
 
     // Constant value keywords
     [/^\btrue\b/, 'true'],
@@ -72,6 +70,8 @@ const Spec = [
     [/^\bextends\b/, 'extends'],
     [/^\bsuper\b/, 'super'],
     [/^\bthis\b/, 'this'],
+
+    [/^\bextern\b/, 'extern'],
 
     // Preprocessor symbols:
     [/^#dependency/, 'PRE_INCLUDE'],

@@ -140,6 +140,14 @@ const JSONFactory = {
             body
         };
     },
+    ExternDeclaration(name, type, params) {
+        return {
+            type: 'ExternDeclaration',
+            name,
+            valType: type,
+            params
+        };
+    },
     ReturnStatement(argument) {
         return {
             type: 'ReturnStatement',

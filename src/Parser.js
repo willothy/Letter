@@ -124,6 +124,8 @@ class Parser {
                 return this.VariableStatement();
             case 'proc':
                 return this.FunctionDeclaration();
+            case 'extern':
+                return this.ExternDeclaration();
             case 'class':
                 return this.ClassDeclaration();
             case 'return':
@@ -182,6 +184,22 @@ class Parser {
         return factory.FunctionDeclaration(name, params, body);
     }
 
+    ExternDeclaration() {
+        this._eat('extern');
+        const type = this.Type();
+        const name = this.Identifier();
+
+        this._eat('(');
+
+        const params = this._lookahead.type !== ')' 
+            ? this.FormalParameterList() : [];
+
+        this._eat(')');
+        this._eat(';');
+
+        return factory.ExternDeclaration(name, type, params);
+    }
+
     /**
      *  FormalParameterList
      *      : Identifier
@@ -192,7 +210,12 @@ class Parser {
         const params = [];
 
         do {
-            params.push(this.Identifier());
+            const type = this.Type();
+            const id = this.Identifier();
+            params.push({
+                type,
+                id,
+            });
         } while (this._lookahead.type === ',' && this._eat(','));
         return params;
     }
@@ -357,7 +380,7 @@ class Parser {
 
     /**
      *  VariableDeclaration
-     *      : Identifier OptVariableInitializer
+     *      : Type Identifier OptVariableInitializer
      */
     VariableDeclaration() {
         const type = this.Type();
@@ -369,8 +392,29 @@ class Parser {
         return factory.VariableDeclaration(id, type, init);
     }
 
+    /**
+     *      Type
+     *      : TYPE
+     *      | TYPE MULTIPLICATIVE_OPERATOR 
+     */
     Type() {
-        return this._eat('PRIMITIVE').value;
+        // return this._eat('TYPE').value;
+        let baseType = this._eat('TYPE').value;
+        let typeStr = baseType;
+        let dimensions = 0;
+        let arrayType = false;
+        while (this._lookahead.type == 'MULTIPLICATIVE_OPERATOR') {
+            arrayType = true;
+            dimensions++;
+            typeStr += '*';
+            this._eat('MULTIPLICATIVE_OPERATOR');
+        }
+        return {
+            type: baseType,
+            typeStr,
+            arrayType,
+            dimensions,
+        };
     }
 
     /**

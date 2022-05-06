@@ -32,6 +32,8 @@ class Compiler {
             case 'double':
                 return this.builder.getDoubleTy();
             case 'char':
+                return this.builder.getInt8Ty();
+            default:
                 return this.builder.getInt8Ty();                
         }
     }
@@ -52,10 +54,10 @@ class Compiler {
     }
     
     compile(ast) {
-        this.module.getOrInsertFunction(
+        /*this.module.getOrInsertFunction(
             'printf',
             llvm.FunctionType.get(this.builder.getInt32Ty(), [llvm.PointerType.get(this.builder.getInt8Ty(), 0)], true), //llvm.FunctionType.get(this.builder.getInt32Ty(), false),   
-        );
+        );*/
         this.codegen(ast);
         return this.module.print();
     }
@@ -91,6 +93,14 @@ class Compiler {
         return val.getType().isIntegerTy(32);
     }
 
+    resolveArrayParam(param) {
+        let resolved = llvm.PointerType.get(this.convertType(param.type.type), 0);
+        for (let i = 1; i < param.type.dimensions; i++) {
+            resolved = llvm.PointerType.get(resolved, 0);
+        }
+        return resolved;
+    }
+
     codegen(ast, symbols = {}) {
         let current = ast;
 
@@ -119,9 +129,32 @@ class Compiler {
             );
             this.builder.CreateRet(ConstantInt.get(this.builder.getInt32Ty(), 0, false));
         }
+        if (current.type === 'FunctionDeclaration') {
+
+        }
+        if (current.type === 'CallExpression') {
+
+        }
+        if (current.type === 'ExternDeclaration') {
+            let params = [];
+            for (const param of current.params) {
+                if (param.type.arrayType === false) {
+                    params.push(this.convertType(param.type.type));
+                } else {
+                    const r = this.resolveArrayParam(param);
+                    //console.log(r);
+                    params.push(r);
+                }
+            }
+            //console.log(params);
+            this.module.getOrInsertFunction(
+                current.name.name,
+                llvm.FunctionType.get(this.convertType(current.type.type), params, true) //llvm.FunctionType.get(this.builder.getInt32Ty(), false),   
+            );
+        }
         if (current.type === 'VariableStatement') {
             for (const declaration of current.declarations) {
-                const type = this.convertType(declaration.valType)
+                const type = this.convertType(declaration.valType.type)
                 const alloc = this.builder.CreateAlloca(
                     type, 
                     llvm.ConstantInt.get(this.builder.getInt8Ty(), 0, false), 
@@ -150,6 +183,9 @@ class Compiler {
                 return llvm.ConstantInt.get(this.builder.getInt32Ty(), current.value, true);
             else
                 return llvm.ConstantFP.get(this.builder.getFloatTy(), current.value, true);
+        }
+        if (current.type === 'StringLiteral') {
+            return this.builder.CreateGlobalStringPtr(current.value);
         }
         if (current.type === 'Identifier') {
             const info = symbols[current.name];
