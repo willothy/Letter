@@ -1,7 +1,5 @@
 #!/usr/bin/env node
 
-'use strict';
-
 const { Parser } = require('./src/Parser');
 const { Evaluator } = require('./src/Evaluator');
 const { Compiler } = require('./src/Compiler');

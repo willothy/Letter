@@ -101,39 +101,109 @@ class Compiler {
         return resolved;
     }
 
+    resolveFuncType(returnType) {
+        if (returnType.arrayType === false) {
+            return this.convertType(returnType.type);
+        } else {
+            let resolved = llvm.PointerType.get(this.convertType(returnType.type), 0);
+            for (let i = 1; i < returnType.dimensions; i++) {
+                resolved = llvm.PointerType.get(resolved, 0);
+            }
+            return resolved;
+        }
+    }
+
     codegen(ast, symbols = {}) {
         let current = ast;
 
         if (current.type === 'Program') {
-            const mainReturnType = llvm.FunctionType.get(this.builder.getInt32Ty(), [], false);
+            /*const mainReturnType = llvm.FunctionType.get(this.builder.getInt32Ty(), [], false);
             const main = llvm.Function.Create(mainReturnType, llvm.Function.LinkageTypes.ExternalLinkage, 'test', this.module);
-            const mainEntry = llvm.BasicBlock.Create(this.context, 'entry', main);
+            */
+            const mainEntry = llvm.BasicBlock.Create(this.context, 'entry');
             this.builder.SetInsertPoint(mainEntry);
 
             for (const statement of current.body) {
                 this.codegen(statement, symbols);
             }
+            
             //console.log(symbols)
-            const info = symbols.circumference; 
+            //const info = symbols.circumference; 
 
-            const load = this.builder.CreateLoad(info.type, info.alloc, 'tmp');
+            //const load = this.builder.CreateLoad(info.type, info.alloc, 'tmp');
             //console.log(getKeyByValue(llvm.Type.TypeID, load.getType().getTypeID()));
 
-            this.builder.CreateCall(
+            /*this.builder.CreateCall(
                 this.module.getFunction('printf'), 
                 [
                     this.builder.CreateGlobalStringPtr("%f\n"), 
                     this.builder.CreateFPExt(load, this.builder.getDoubleTy(), 'tmp')
                 ], 
                 'printCall'
-            );
-            this.builder.CreateRet(ConstantInt.get(this.builder.getInt32Ty(), 0, false));
+            );*/
+            //this.builder.CreateRet(ConstantInt.get(this.builder.getInt32Ty(), 0, false));
+        }
+        if (current.type === 'BlockStatement') {
+            for (const statement of current.body) {
+                this.codegen(statement, symbols);
+            }
         }
         if (current.type === 'FunctionDeclaration') {
-
+            
+            const params = [];
+            const paramSymbols = [];
+            for (const param of current.params) {
+                paramSymbols.push(param.id.name);
+                if (param.type.arrayType === false) {
+                    params.push(this.convertType(param.type.type));
+                } else {
+                    const r = this.resolveArrayParam(param);
+                    //console.log(r);
+                    params.push(r);
+                }
+            }
+            
+            let returnType = this.resolveFuncType(current.returnType);
+            
+            const funcType = llvm.FunctionType.get(returnType, params, false);
+            const func = llvm.Function.Create(
+                funcType,
+                llvm.Function.LinkageTypes.ExternalLinkage,
+                current.name.name,
+                this.module
+            );
+            const locals = {};
+            for (const [index, symbol] of paramSymbols.entries()) {
+                const arg = func.getArg(index);
+                arg.setName(symbol);
+                locals[symbol] = {
+                    type: arg.getType(),
+                    name: symbol,
+                    alloc: arg,
+                    isArg: true
+                };
+            }
+            const entryBB = llvm.BasicBlock.Create(this.context, 'entry', func);
+            this.builder.SetInsertPoint(entryBB);
+            this.codegen(current.body, {
+                ...symbols, 
+                ...locals
+            });
+            this.builder.CreateRet(this.builder.getInt32(0));
+        }
+        if (current.type === 'ExpressionStatement') {
+            return this.codegen(current.expression, symbols);
         }
         if (current.type === 'CallExpression') {
-
+            const callArgs = [];
+            for (const arg of current.arguments) {
+                callArgs.push(this.codegen(arg, symbols));
+            }
+            return this.builder.CreateCall(
+                this.module.getFunction(current.callee.name), 
+                callArgs, 
+                current.callee.name + '_call'
+            );
         }
         if (current.type === 'ExternDeclaration') {
             let params = [];
@@ -159,7 +229,8 @@ class Compiler {
                     type, 
                     llvm.ConstantInt.get(this.builder.getInt8Ty(), 0, false), 
                     declaration.id.name
-                ); //, 0, declaration.id.name
+                ); 
+                
                 if (declaration.init) {
                     symbols[declaration.id.name] = {
                         name: declaration.id.name,
@@ -185,11 +256,32 @@ class Compiler {
                 return llvm.ConstantFP.get(this.builder.getFloatTy(), current.value, true);
         }
         if (current.type === 'StringLiteral') {
-            return this.builder.CreateGlobalStringPtr(current.value);
+            
+            //this.builder.CreateGlobalStringPtr(current.value, 'anon_str', 0, this.module);
+            let literal = current.value;
+            let chars = literal.split('');
+            let init = llvm.ArrayType.get(this.builder.getInt8Ty(), literal.length).getPointerTo;
+            let global = new llvm.GlobalVariable(
+                this.builder.getInt8Ty(),
+                false,
+                llvm.Function.LinkageTypes.ExternalLinkage,
+                init,
+                literal 
+            )
+            
+            for (let ch of chars) {
+                ch = llvm.ConstantInt.get(this.context, new llvm.APInt(8, ch.charCodeAt(0), true));
+            }
+            
+            console.log(chars);
+            return llvm.ConstantExpr.getBitCast()
         }
         if (current.type === 'Identifier') {
             const info = symbols[current.name];
-            return this.builder.CreateLoad(info.type, info.alloc, 'tmp');
+            if (info.isArg)
+                return info.alloc;
+            else
+                return this.builder.CreateLoad(info.type, info.alloc, 'tmp');
         }
         if (current.type === 'BinaryExpression') {
             let left = this.codegen(current.left, symbols);

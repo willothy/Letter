@@ -170,6 +170,7 @@ class Parser {
      */
     FunctionDeclaration() {
         this._eat('proc');
+        const type = this.Type();
         const name = this.Identifier();
 
         this._eat('(');
@@ -181,7 +182,7 @@ class Parser {
 
         const body = this.Statement();
 
-        return factory.FunctionDeclaration(name, params, body);
+        return factory.FunctionDeclaration(name, type, params, body);
     }
 
     ExternDeclaration() {

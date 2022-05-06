@@ -1,7 +1,14 @@
-#dependency @./area.lt
+
 #define pi 3.1415926
 
 extern int printf(char* str);
 extern double pow(double base, double exponent);
 
-let float circumference = 2.0;
+proc int test(int e) {
+    let int r = e;
+}
+
+proc int main() {
+    let float circumference = 2.0;
+    printf("%f\n", circumference);
+}

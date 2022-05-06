@@ -132,10 +132,11 @@ const JSONFactory = {
             body
         };
     },
-    FunctionDeclaration(name, params, body) {
+    FunctionDeclaration(name, type, params, body) {
         return {
             type: 'FunctionDeclaration',
             name,
+            returnType: type,
             params,
             body
         };
