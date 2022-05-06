@@ -1,7 +1,6 @@
 #dependency @./print.lt
 #dependency @./pi.lt
 
-
 proc int main() {
     let int radius = 5;
     let float circumference = 2.0 * pi * radius;

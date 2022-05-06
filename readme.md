@@ -4,7 +4,7 @@
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=willothy_Letter&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=willothy_Letter)
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=willothy_Letter&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=willothy_Letter)
 
-Letter is a compiler project built in JavaScript/NodeJS using the [llvm-bindings](https://github.com/ApsarasX/llvm-bindings) module. Letter compiles to LLVM IR, which can then be compiled with Clang.
+Letter is a compiler project built in JavaScript/NodeJS using the [llvm-bindings](https://github.com/ApsarasX/llvm-bindings) module. The parser is based off of lectures by [Dmitry Soshnikov](https://github.com/DmitrySoshnikov/). Letter compiles to LLVM IR, which can then be compiled with Clang.
 
 Letter is functional-only at the moment, though the parser supports objects and I plan on implementing them.
 
