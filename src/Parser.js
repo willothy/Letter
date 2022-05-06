@@ -857,6 +857,8 @@ class Parser {
                 return this.NumericLiteral(this._lookahead.type);
             case 'STRING': 
                 return this.StringLiteral();
+            case 'CHAR':
+                return this.CharLiteral();
             case 'true':
                 return this.BooleanLiteral(true);
             case 'false':
@@ -865,6 +867,11 @@ class Parser {
                 return this.NullLiteral();
         }
         throw new SyntaxError(`Literal: unexpected literal production "${this._lookahead.value}", last: "${JSON.stringify(this._last, null, 2)}", next: ${JSON.stringify(this._tokenizer.exec()[0])}`);
+    }
+
+    CharLiteral() {
+        const token = this._eat('CHAR');
+        return factory.CharLiteral(token.value.slice(1, -1));
     }
 
     /**
@@ -895,10 +902,7 @@ class Parser {
      */
     StringLiteral() {
         const token = this._eat('STRING');
-        return {
-            type: 'StringLiteral',
-            value: token.value.slice(1, -1),
-        };
+        return factory.StringLiteral(token.value.slice(1, -1));
     }
 
     /**

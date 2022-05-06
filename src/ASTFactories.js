@@ -32,6 +32,12 @@ const JSONFactory = {
             value,
         };
     },
+    CharLiteral(value) {
+        return {
+            type: 'CharLiteral',
+            value,
+        };
+    },
     NumericLiteral(value) {
         return {
             type: 'NumericLiteral',

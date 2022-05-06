@@ -47,19 +47,30 @@ class Compiler {
             case 'float':
                 return new llvm.ConstantFP.get(this.builder.getFloatTy(), parseFloat(value), true);
             case 'double':
-                return new llvm.APFloat(parseFloat(`${value}`));
+                return new llvm.ConstantFP.get(this.builder.getDoubleTy(), parseFloat(value), true);
             case 'char':
-                return new llvm.APInt(8, value, true);             
+                return new llvm.ConstantInt.get(this.builder.getInt8Ty(), value, false);             
         }
     }
     
     compile(ast) {
-        /*this.module.getOrInsertFunction(
-            'printf',
-            llvm.FunctionType.get(this.builder.getInt32Ty(), [llvm.PointerType.get(this.builder.getInt8Ty(), 0)], true), //llvm.FunctionType.get(this.builder.getInt32Ty(), false),   
-        );*/
         this.codegen(ast);
         return this.module.print();
+    }
+
+    handleNumericTypecasts(value, expectedType, gotType) {
+        if (expectedType === 'Double' && gotType === 'Float') {
+            return this.builder.CreateFPExt(value, this.builder.getDoubleTy(), 'flt_upcast');
+        } else if (expectedType === 'Float' && gotType === 'Double') {
+            return this.builder.CreateFPTrunc(value, this.builder.getDoubleTy(), 'dbl_downcast');
+        } else if (expectedType === 'Double' && gotType === 'Integer') {
+            return this.builder.CreateSIToFP(value, this.builder.getDoubleTy(), 'si_to_dbl');
+        } else if (expectedType === 'Float' && gotType === 'Integer') {
+            return this.builder.CreateSIToFP(value, this.builder.getFloatTy(), 'si_to_flt');
+        } else if (expectedType === 'Integer' && (gotType === 'Float' || gotType === 'Double')) {
+            return this.builder.CreateFPToSI(value, this.builder.getInt64Ty(), 'flt_to_si');
+        }
+        return null;
     }
 
     checkType(value, expectedType) {
@@ -70,12 +81,15 @@ class Compiler {
             let got = getKeyByValue(llvm.Type.TypeID, value.getType().getTypeID());
             got = got.substring(0, got.length-4)
 
-            let m = `Expected type ${
+            const v = this.handleNumericTypecasts(value, exp, got);
+            if (v) return v;
+            
+            let typeErrorMessage = `Expected type ${
                 exp
             }, got ${
                 got
             }`;
-            throw new TypeError(m);
+            throw new TypeError(typeErrorMessage);
         }
         return value;
     }
@@ -113,35 +127,32 @@ class Compiler {
         }
     }
 
+    // https://stackoverflow.com/a/48682135/6884167
+    unbackslash(s) {
+        return s.replace(/\\([\\rnt'"])/g, function(match, p1) {
+            const codes = []
+            for (const letter of p1) 
+                codes.push(letter.charCodeAt(0));
+            
+            if (p1 === 'n') return '\n';
+            if (p1 === 'r') return '\r';
+            if (p1 === 't') return '\t';
+            if (p1 === '\\') return '\\';
+            
+            return p1;       // unrecognised escape
+        });
+    }
+
     codegen(ast, symbols = {}) {
         let current = ast;
 
         if (current.type === 'Program') {
-            /*const mainReturnType = llvm.FunctionType.get(this.builder.getInt32Ty(), [], false);
-            const main = llvm.Function.Create(mainReturnType, llvm.Function.LinkageTypes.ExternalLinkage, 'test', this.module);
-            */
             const mainEntry = llvm.BasicBlock.Create(this.context, 'entry');
             this.builder.SetInsertPoint(mainEntry);
 
             for (const statement of current.body) {
                 this.codegen(statement, symbols);
             }
-            
-            //console.log(symbols)
-            //const info = symbols.circumference; 
-
-            //const load = this.builder.CreateLoad(info.type, info.alloc, 'tmp');
-            //console.log(getKeyByValue(llvm.Type.TypeID, load.getType().getTypeID()));
-
-            /*this.builder.CreateCall(
-                this.module.getFunction('printf'), 
-                [
-                    this.builder.CreateGlobalStringPtr("%f\n"), 
-                    this.builder.CreateFPExt(load, this.builder.getDoubleTy(), 'tmp')
-                ], 
-                'printCall'
-            );*/
-            //this.builder.CreateRet(ConstantInt.get(this.builder.getInt32Ty(), 0, false));
         }
         if (current.type === 'BlockStatement') {
             for (const statement of current.body) {
@@ -212,14 +223,14 @@ class Compiler {
                     params.push(this.convertType(param.type.type));
                 } else {
                     const r = this.resolveArrayParam(param);
-                    //console.log(r);
+                    
                     params.push(r);
                 }
             }
-            //console.log(params);
+            
             this.module.getOrInsertFunction(
                 current.name.name,
-                llvm.FunctionType.get(this.convertType(current.type.type), params, true) //llvm.FunctionType.get(this.builder.getInt32Ty(), false),   
+                llvm.FunctionType.get(this.convertType(current.type.type), params, true) 
             );
         }
         if (current.type === 'VariableStatement') {
@@ -248,33 +259,16 @@ class Compiler {
             }
         }
         if (current.type === 'NumericLiteral') {
-            //return llvm.ConstantFP.get(this.builder.getFloatTy(), current.value);
-            
             if (current.valType === 'INTEGER')
                 return llvm.ConstantInt.get(this.builder.getInt32Ty(), current.value, true);
             else
                 return llvm.ConstantFP.get(this.builder.getFloatTy(), current.value, true);
         }
+        if (current.type === 'CharLiteral') {
+            return llvm.ConstantInt.get(this.builder.getInt8Ty(), current.value, false);
+        }
         if (current.type === 'StringLiteral') {
-            
-            //this.builder.CreateGlobalStringPtr(current.value, 'anon_str', 0, this.module);
-            let literal = current.value;
-            let chars = literal.split('');
-            let init = llvm.ArrayType.get(this.builder.getInt8Ty(), literal.length).getPointerTo;
-            let global = new llvm.GlobalVariable(
-                this.builder.getInt8Ty(),
-                false,
-                llvm.Function.LinkageTypes.ExternalLinkage,
-                init,
-                literal 
-            )
-            
-            for (let ch of chars) {
-                ch = llvm.ConstantInt.get(this.context, new llvm.APInt(8, ch.charCodeAt(0), true));
-            }
-            
-            console.log(chars);
-            return llvm.ConstantExpr.getBitCast()
+            return this.builder.CreateGlobalStringPtr(this.unbackslash(current.value), 'anon_str', 0, this.module);
         }
         if (current.type === 'Identifier') {
             const info = symbols[current.name];

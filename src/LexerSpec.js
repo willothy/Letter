@@ -90,7 +90,7 @@ const Spec = [
     
     // Strings:
     [/^"[^"]*"/, 'STRING'],
-    [/^'[^']*'/, 'STRING'],
+    [/^'[^']'/, 'CHAR'],
 
     // Multiline string
     [/^`[^`]*`/m, 'STRING']
