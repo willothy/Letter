@@ -6,7 +6,7 @@ import Compiler from './src/Compiler';
 import { readFileSync } from "fs";
 import { dirname, resolve, basename } from 'path';
 
-Error.stackTraceLimit = 0; // Don't print js stack trace when --stack isn't enabled
+Error.stackTraceLimit = 5; // Don't print js stack trace when --stack isn't enabled
 
 function main(argv) {
     const [_node, _path, mode, source, ...rest] = argv;

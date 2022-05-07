@@ -6,7 +6,7 @@ proc float circumference(float radius) {
 }
 
 proc int main() {
-    let double value = getValue(5.0);
-    printInt(value);
+    let double value = circumference(5.0);
+    printDouble(value);
     return 0;
 }

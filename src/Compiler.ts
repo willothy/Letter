@@ -234,16 +234,16 @@ export default class Compiler {
             this.builder.SetInsertPoint(mainEntry);
 
             for (const statement of current.body) {
-                this.codegen(statement, symbols);
+                this.codegen(statement, symbols, fn);
             }
         }
         if (current.type === 'BlockStatement') {
             for (const statement of current.body) {
-                this.codegen(statement, symbols);
+                this.codegen(statement, symbols, fn);
             }
         }
         if (current.type === 'ReturnStatement') {
-            this.builder.CreateRet(this.codegen(current.argument));
+            this.builder.CreateRet(this.codegen(current.argument, symbols, fn));
         }
         if (current.type === 'FunctionDeclaration') {
             const params = [];
@@ -288,12 +288,12 @@ export default class Compiler {
                 this.builder.CreateRetVoid();
         }
         if (current.type === 'ExpressionStatement') {
-            return this.codegen(current.expression, symbols);
+            return this.codegen(current.expression, symbols, fn);
         }
         if (current.type === 'CallExpression') {
             const callArgs = [];
             for (const arg of current.arguments) {
-                callArgs.push(this.codegen(arg, symbols));
+                callArgs.push(this.codegen(arg, symbols, fn));
             }
             return this.builder.CreateCall(
                 this.module.getFunction(current.callee.name), 
@@ -334,7 +334,7 @@ export default class Compiler {
                     }
                     this.builder.CreateStore(
                         this.checkType(
-                            this.codegen(declaration.init, symbols),
+                            this.codegen(declaration.init, symbols, fn),
                             type
                         ),
                         alloc
@@ -395,8 +395,8 @@ export default class Compiler {
             return info.isArg ? info.alloc : this.builder.CreateLoad(info.type, info.alloc, 'tmp');
         }
         if (current.type === 'BinaryExpression') {
-            let left = this.codegen(current.left, symbols);
-            let right = this.codegen(current.right, symbols);
+            let left = this.codegen(current.left, symbols, fn);
+            let right = this.codegen(current.right, symbols, fn);
 
             const leftType = left.getType();
             const rightType = right.getType();
