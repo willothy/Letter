@@ -240,8 +240,7 @@ class Compiler {
                 }
             }
             
-            let returnType;
-            returnType = current.returnType.type === 'void' ? this.builder.getVoidTy() : this.resolveFuncType(current.returnType);
+            const returnType = current.returnType.type === 'void' ? this.builder.getVoidTy() : this.resolveFuncType(current.returnType);
             
             const funcType = llvm.FunctionType.get(returnType, params, false);
             const func = llvm.Function.Create(
