@@ -67,7 +67,7 @@ class Tokenizer {
             if (tokenValue === null) continue;
 
             if (tokenType === null) {
-                if (nulls == true) {
+                if (nulls === true) {
                     return {
                         type: tokenType,
                         value: tokenValue

@@ -104,7 +104,7 @@ class Preprocessor {
                     throw new PreprocessorError(`Unexpected token "${JSON.stringify(lookahead[0])}", 
                         next: "${JSON.stringify(lookahead[1])}"`);
                 }
-            } else if (tokens[i].type == 'IDENTIFIER' && String(tokens[i].value) in symbols) {
+            } else if (tokens[i].type === 'IDENTIFIER' && String(tokens[i].value) in symbols) {
                 program.push(symbols[tokens[i].value]);
             } else {
                 program.push(tokens[i].value);
