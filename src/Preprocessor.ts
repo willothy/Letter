@@ -1,7 +1,7 @@
 import Tokenizer from './Tokenizer';
 
 import { readFileSync } from 'fs';
-import { join, resolve } from 'path';
+import { join } from 'path';
 
 import PreprocessorError from './Error/PreprocessorError';
 

@@ -6,25 +6,19 @@ import Compiler from './src/Compiler/';
 import { readFileSync } from "fs";
 import { dirname, resolve, basename } from 'path';
 
-Error.stackTraceLimit = 5; // Don't print js stack trace when --stack isn't enabled
+Error.stackTraceLimit = 5; // Don't print full js stack trace when --stack isn't enabled
 
 function main(argv) {
-    const [_node, _path, mode, source, ...rest] = argv;
-
-    let printStackTrace = false;
+    const [mode, source, ...rest] = argv.slice(2, argv.length);
+    
     let minify = false;
-    let debugEval = false;
     if (rest.includes('-s') || rest.includes('--stack')) {
-        printStackTrace = true;
         Error.stackTraceLimit = 100;
         // TODO: Implement evaluator stack trace
     }
 
     if (rest.includes('-m') || rest.includes('--minify')) 
         minify = true;
-
-    if (rest.includes('-d') || rest.includes('--debug')) 
-        debugEval = true;
     
     const parser = new Parser(minify);
     //const evaluator = new Evaluator();
