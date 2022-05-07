@@ -58,7 +58,7 @@ export default class Compiler {
         return this.module.print();
     }
 
-    codegen(node, symbols:{}={}, fn:Function=undefined) {
+    codegen(node, symbols:Object={}, fn:llvm.Function=undefined) {
         switch (node.type) {
             case 'Program':
                 this.Program(node, symbols, fn);

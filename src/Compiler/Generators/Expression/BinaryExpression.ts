@@ -1,6 +1,6 @@
 import { Type, Function } from "llvm-bindings";
 
-export default function BinaryExpression(this, node: any, symbols: {}, fn: Function) {
+export default function BinaryExpression(this, node: any, symbols: Object, fn: llvm.Function) {
     let left = this.codegen(node.left, symbols, fn);
     let right = this.codegen(node.right, symbols, fn);
 
