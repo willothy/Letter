@@ -1,10 +1,6 @@
 import Tokenizer from './Tokenizer';
-import Factories from './ASTFactories';
+import NodeFactory from './ASTFactory';
 import Preprocessor from './Preprocessor';
-
-const AST_MODE = 'default';
-
-const factory = Factories[AST_MODE];
 
 export default class Parser {
     _program;
@@ -85,7 +81,7 @@ export default class Parser {
      *      ;
      */
     Program() {
-        return factory.Program(this.StatementList())
+        return NodeFactory.Program(this.StatementList())
     }
 
     /**
@@ -158,7 +154,7 @@ export default class Parser {
 
         const body = this.BlockStatement();
 
-        return factory.ClassDeclaration(id, superClass, body);
+        return NodeFactory.ClassDeclaration(id, superClass, body);
     }
 
     /**
@@ -201,7 +197,7 @@ export default class Parser {
 
         const body = this.Statement();
 
-        return factory.FunctionDeclaration(name, type, params, body);
+        return NodeFactory.FunctionDeclaration(name, type, params, body);
     }
 
     ExternDeclaration() {
@@ -217,7 +213,7 @@ export default class Parser {
         this._eat(')');
         this._eat(';');
 
-        return factory.ExternDeclaration(name, type, params);
+        return NodeFactory.ExternDeclaration(name, type, params);
     }
 
     /**
@@ -249,7 +245,7 @@ export default class Parser {
         this._eat('return');
         const argument = this._lookahead.type !== ';' ? this.Expression() : null;
         this._eat(';');
-        return factory.ReturnStatement(argument);        
+        return NodeFactory.ReturnStatement(argument);        
     }
 
     /**
@@ -284,7 +280,7 @@ export default class Parser {
 
         const body = this.Statement();
 
-        return factory.WhileStatement(test, body);
+        return NodeFactory.WhileStatement(test, body);
     }   
 
     /**
@@ -302,7 +298,7 @@ export default class Parser {
         this._eat(')');
         this._eat(';');
 
-        return factory.DoWhileStatement(body, test);
+        return NodeFactory.DoWhileStatement(body, test);
     }   
 
 
@@ -325,7 +321,7 @@ export default class Parser {
 
         const body = this.Statement();
 
-        return factory.ForStatement(init, test, update, body);
+        return NodeFactory.ForStatement(init, test, update, body);
     }
 
     /**
@@ -357,7 +353,7 @@ export default class Parser {
         const consequent = this.Statement();
         const alternate = this._lookahead != null && this._lookahead.type === 'else'
             ? this._eat('else') && this.Statement() : null;
-        return factory.IfStatement(test, consequent, alternate);
+        return NodeFactory.IfStatement(test, consequent, alternate);
     }
 
     /**
@@ -368,7 +364,7 @@ export default class Parser {
     VariableStatementInit() {
         this._eat('let');
         const declarations = this.VariableDeclarationList();
-        return factory.VariableStatement(declarations);
+        return NodeFactory.VariableStatement(declarations);
     }
 
     /**
@@ -409,7 +405,7 @@ export default class Parser {
         const init = this._lookahead.type !== ';' && this._lookahead.type !== ',' 
             ? this.VariableInitializer() : null;
 
-        return factory.VariableDeclaration(id, type, init);
+        return NodeFactory.VariableDeclaration(id, type, init);
     }
 
     /**
@@ -454,7 +450,7 @@ export default class Parser {
      */
     EmptyStatement() {
         this._eat(';');
-        return factory.EmptyStatement();
+        return NodeFactory.EmptyStatement();
     }
 
     /**
@@ -469,7 +465,7 @@ export default class Parser {
 
         this._eat('}');
 
-        return factory.BlockStatement(body)
+        return NodeFactory.BlockStatement(body)
     }
 
     /**
@@ -479,7 +475,7 @@ export default class Parser {
     ExpressionStatement() {
         const expression = this.Expression();
         this._eat(';');
-        return factory.ExpressionStatement(expression);
+        return NodeFactory.ExpressionStatement(expression);
     }
 
     /**
@@ -503,7 +499,7 @@ export default class Parser {
             return left;
         }
 
-        return factory.AssignmentExpression(
+        return NodeFactory.AssignmentExpression(
             this.AssignmentOperator().value, 
             this._checkValidAssignmentTarget(left),
             this.AssignmentExpression()
@@ -536,7 +532,7 @@ export default class Parser {
      */
     Identifier() {
         const name = this._eat('IDENTIFIER').value;
-        return factory.Identifier(name);
+        return NodeFactory.Identifier(name);
     }
 
     /**
@@ -622,7 +618,7 @@ export default class Parser {
 
             const right = this[builderName]();
 
-            left = factory.LogicalExpression(operator, left, right);
+            left = NodeFactory.LogicalExpression(operator, left, right);
         }
         return left;
     }
@@ -638,7 +634,7 @@ export default class Parser {
 
             const right = this[builderName]();
 
-            left = factory.BinaryExpression(operator, left, right);
+            left = NodeFactory.BinaryExpression(operator, left, right);
         }
 
         return left;
@@ -662,7 +658,7 @@ export default class Parser {
                 break;
         }
         if (operator != null) {
-            return factory.UnaryExpression(operator, this.UnaryExpression());
+            return NodeFactory.UnaryExpression(operator, this.UnaryExpression());
         }
         return this.LeftHandSideExpression();
     }
@@ -705,7 +701,7 @@ export default class Parser {
      *      ;
      */
     _CallExpression(callee) {
-        let callExpression = factory.CallExpression(callee, this.Arguments());
+        let callExpression = NodeFactory.CallExpression(callee, this.Arguments());
 
         if (this._lookahead.type === '(') {
             callExpression = this._CallExpression(callExpression);
@@ -759,7 +755,7 @@ export default class Parser {
             if (this._lookahead.type === '.') {
                 this._eat('.');
                 const property = this.Identifier();
-                object = factory.MemberExpression(false, object, property);
+                object = NodeFactory.MemberExpression(false, object, property);
             }
 
             // MemberExpression '[' Expression ']'
@@ -767,7 +763,7 @@ export default class Parser {
                 this._eat('[');
                 const property = this.Expression();
                 this._eat(']');
-                object = factory.MemberExpression(true, object, property);
+                object = NodeFactory.MemberExpression(true, object, property);
             }
         }
         return object;
@@ -809,7 +805,7 @@ export default class Parser {
         this._eat('new');
         const callee = this.MemberExpression();
         const args = this.Arguments();
-        return factory.NewExpression(callee, args);
+        return NodeFactory.NewExpression(callee, args);
     }
 
     /**
@@ -819,7 +815,7 @@ export default class Parser {
      */
     ThisExpression() {
         this._eat('this');
-        return factory.ThisExpression();
+        return NodeFactory.ThisExpression();
     }
 
     /**
@@ -829,7 +825,7 @@ export default class Parser {
      */
     Super() {
         this._eat('super');
-        return factory.Super();
+        return NodeFactory.Super();
     }
 
     /**
@@ -890,7 +886,7 @@ export default class Parser {
 
     CharLiteral() {
         const token = this._eat('CHAR');
-        return factory.CharLiteral(token.value.slice(1, -1));
+        return NodeFactory.CharLiteral(token.value.slice(1, -1));
     }
 
     /**
@@ -901,7 +897,7 @@ export default class Parser {
      */
     BooleanLiteral(value) {
         this._eat(value ? 'true' : 'false');
-        return factory.BooleanLiteral(value);
+        return NodeFactory.BooleanLiteral(value);
     }
 
     /**
@@ -911,7 +907,7 @@ export default class Parser {
      */
     NullLiteral() {
         this._eat('null');
-        return factory.NullLiteral();
+        return NodeFactory.NullLiteral();
     }
 
     /**
@@ -921,7 +917,7 @@ export default class Parser {
      */
     StringLiteral() {
         const token = this._eat('STRING');
-        return factory.StringLiteral(token.value.slice(1, -1));
+        return NodeFactory.StringLiteral(token.value.slice(1, -1));
     }
 
     /**

@@ -1,5 +1,4 @@
 import { 
-    Function,
     LLVMContext, 
     Module, 
     IRBuilder 
@@ -55,6 +54,7 @@ export default class Compiler {
      */
     compile(ast) {
         this.codegen(ast);
+        
         return this.module.print();
     }
 
