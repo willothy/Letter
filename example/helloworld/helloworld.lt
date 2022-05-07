@@ -1,0 +1,7 @@
+#dependency @../print.lt
+
+proc int main() {
+    let string str = "Hello World\n";
+    print(str);
+    return 0;
+}

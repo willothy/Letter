@@ -1,0 +1,5 @@
+#dependency @../print.lt
+
+proc void test(int v) {
+    printInt(v);
+}

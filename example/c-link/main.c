@@ -2,6 +2,6 @@
 extern int test();
 
 int main(void) {
-    test();
+    test(5);
     return 0;
 }

@@ -50,6 +50,7 @@ const Spec = [
     [/^\bdouble\b/, 'TYPE'],
     [/^\bchar\b/, 'TYPE'],
     [/^\bbool\b/, 'TYPE'],
+    [/^\bstring\b/, 'TYPE'],
 
     // Constant value keywords
     [/^\btrue\b/, 'true'],

@@ -7,3 +7,7 @@ proc void printInt(int v) {
 proc void printDouble(double v) {
     printf("%f\n", v);
 }
+
+proc void print(string v) {
+    printf(v);
+}
