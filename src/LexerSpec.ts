@@ -1,100 +1,100 @@
 /** Tokenizer Spec
- * 
+ *
  */
 const Spec = [
-    // Whitespace:
-    [/^\s+/, null],
-    [/^\n+/, null],
+  // Whitespace:
+  [/^\s+/, null],
+  [/^\n+/, null],
 
-    // Comments:
-    //Single-Line comments:
-    [/^\/\/.*/, null],
+  // Comments:
+  //Single-Line comments:
+  [/^\/\/.*/, null],
 
-    // Multiline comments
-    [/^\/\*[\s\S]*?\*\//, null],
-    
-    // Symbols
-    [/^;/, ';'],
-    [/^\{/, '{'],
-    [/^\}/, '}'],
-    [/^\(/, '('],
-    [/^\)/, ')'],
-    [/^,/, ','],
-    [/^\./, '.'],
-    [/^\[/, '['],
-    [/^\]/, ']'],
+  // Multiline comments
+  [/^\/\*[\s\S]*?\*\//, null],
 
-    // Relational Operators
-    [/^[><]=?/, 'RELATIONAL_OPERATOR'],
+  // Symbols
+  [/^;/, ";"],
+  [/^\{/, "{"],
+  [/^\}/, "}"],
+  [/^\(/, "("],
+  [/^\)/, ")"],
+  [/^,/, ","],
+  [/^\./, "."],
+  [/^\[/, "["],
+  [/^\]/, "]"],
 
-    // Equality Operators
-    [/^[=!]=/, 'EQUALITY_OPERATOR'],
+  // Relational Operators
+  [/^[><]=?/, "RELATIONAL_OPERATOR"],
 
-    // Logical operators: &&, ||
-    [/^&&/, 'LOGICAL_AND'],
-    [/^\|\|/, 'LOGICAL_OR'],
-    [/^!/, 'LOGICAL_NOT'],
+  // Equality Operators
+  [/^[=!]=/, "EQUALITY_OPERATOR"],
 
-    // Assignment Operators
-    [/^=/, 'SIMPLE_ASSIGN'],
-    [/^[\*\/\+\-]=/, 'COMPLEX_ASSIGN'],
+  // Logical operators: &&, ||
+  [/^&&/, "LOGICAL_AND"],
+  [/^\|\|/, "LOGICAL_OR"],
+  [/^!/, "LOGICAL_NOT"],
 
-    // Mathematical Operators: +, -, *, /
-    [/^[+\-]/, 'ADDITIVE_OPERATOR'],
-    [/^[*\/]/, 'MULTIPLICATIVE_OPERATOR'],
+  // Assignment Operators
+  [/^=/, "SIMPLE_ASSIGN"],
+  [/^[\*\/\+\-]=/, "COMPLEX_ASSIGN"],
 
-    // Primitive Types:
-    [/^\bint\b/, 'TYPE'],
-    [/^\bfloat\b/, 'TYPE'],
-    [/^\bdouble\b/, 'TYPE'],
-    [/^\bchar\b/, 'TYPE'],
-    [/^\bbool\b/, 'TYPE'],
-    [/^\bstring\b/, 'TYPE'],
+  // Mathematical Operators: +, -, *, /
+  [/^[+\-]/, "ADDITIVE_OPERATOR"],
+  [/^[*\/]/, "MULTIPLICATIVE_OPERATOR"],
 
-    // Constant value keywords
-    [/^\btrue\b/, 'true'],
-    [/^\bfalse\b/, 'false'],
-    [/^\bnull\b/, 'null'],
-    [/^\bvoid\b/, 'void'],
+  // Primitive Types:
+  [/^\bint\b/, "TYPE"],
+  [/^\bfloat\b/, "TYPE"],
+  [/^\bdouble\b/, "TYPE"],
+  [/^\bchar\b/, "TYPE"],
+  [/^\bbool\b/, "TYPE"],
+  [/^\bstring\b/, "TYPE"],
 
-    // Keywords:
-    [/^\blet\b/, 'let'],
-    [/^\bif\b/, 'if'],
-    [/^\belse\b/, 'else'],
-    [/^\bwhile\b/, 'while'],
-    [/^\bdo\b/, 'do'],
-    [/^\bfor\b/, 'for'],
-    [/^\bproc\b/, 'proc'],
-    [/^\breturn\b/, 'return'],
-    [/^\bnew\b/, 'new'],
-    [/^\bclass\b/, 'class'],
-    [/^\bextends\b/, 'extends'],
-    [/^\bsuper\b/, 'super'],
-    [/^\bthis\b/, 'this'],
+  // Constant value keywords
+  [/^\btrue\b/, "true"],
+  [/^\bfalse\b/, "false"],
+  [/^\bnull\b/, "null"],
+  [/^\bvoid\b/, "void"],
 
-    [/^\bextern\b/, 'extern'],
+  // Keywords:
+  [/^\blet\b/, "let"],
+  [/^\bif\b/, "if"],
+  [/^\belse\b/, "else"],
+  [/^\bwhile\b/, "while"],
+  [/^\bdo\b/, "do"],
+  [/^\bfor\b/, "for"],
+  [/^\bproc\b/, "proc"],
+  [/^\breturn\b/, "return"],
+  [/^\bnew\b/, "new"],
+  [/^\bclass\b/, "class"],
+  [/^\bextends\b/, "extends"],
+  [/^\bsuper\b/, "super"],
+  [/^\bthis\b/, "this"],
 
-    // Preprocessor symbols:
-    [/^#dependency/, 'PRE_INCLUDE'],
-    [/^#define/, 'PRE_DEFINE'],
+  [/^\bextern\b/, "extern"],
 
-    // Filename
-    [/\@[^\@\n]+/, 'FILENAME'],
+  // Preprocessor symbols:
+  [/^#dependency/, "PRE_INCLUDE"],
+  [/^#define/, "PRE_DEFINE"],
 
-    // Numbers: 
-    //[/^(?![\.]?$)(?=\.?\d+)[\d]*\.?[\d]*(?:[e][\d]+)?(?=\W*)/, 'NUMBER'],
-    [/^[+-]?([0-9]+[.][0-9]*|[.][0-9]+)/, 'FLOAT'],
-    [/^[+-]?([0-9]+)/, 'INTEGER'],
+  // Filename
+  [/\@[^\@\n]+/, "FILENAME"],
 
-    // Identifiers
-    [/^[a-zA-Z_][a-zA-Z_0-9]*/, 'IDENTIFIER'],
-    
-    // Strings:
-    [/^"[^"]*"/, 'STRING'],
-    [/^'[^']'/, 'CHAR'],
+  // Numbers:
+  //[/^(?![\.]?$)(?=\.?\d+)[\d]*\.?[\d]*(?:[e][\d]+)?(?=\W*)/, 'NUMBER'],
+  [/^[+-]?([0-9]+[.][0-9]*|[.][0-9]+)/, "FLOAT"],
+  [/^[+-]?([0-9]+)/, "INTEGER"],
 
-    // Multiline string
-    [/^`[^`]*`/m, 'STRING']
+  // Identifiers
+  [/^[a-zA-Z_][a-zA-Z_0-9]*/, "IDENTIFIER"],
+
+  // Strings:
+  [/^"[^"]*"/, "STRING"],
+  [/^'[^']'/, "CHAR"],
+
+  // Multiline string
+  [/^`[^`]*`/m, "STRING"],
 ];
 
 export default Spec;

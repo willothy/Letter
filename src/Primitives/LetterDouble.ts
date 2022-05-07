@@ -1,10 +1,8 @@
 /**
  * Double primitive
  */
-class LetterDouble {
-
-}
+class LetterDouble {}
 
 module.exports = {
-    LetterDouble
-}
+  LetterDouble,
+};

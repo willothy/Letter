@@ -1,10 +1,8 @@
 /**
  * Char primitive
  */
-class LetterChar {
-    
-}
+class LetterChar {}
 
 module.exports = {
-    LetterChar
-}
+  LetterChar,
+};

@@ -6,32 +6,25 @@ import llvm from "llvm-bindings";
  * Int primitive
  */
 class LetterInteger {
-    value: llvm.Value;
-    builder: llvm.IRBuilder;
-    
-    constructor(value, builder: llvm.IRBuilder) {
-        this.value = value;
-        this.builder = builder;
-    }
+  value: llvm.Value;
+  builder: llvm.IRBuilder;
 
-    add() {
-        //return this.builder.CreateAdd
-    }
+  constructor(value, builder: llvm.IRBuilder) {
+    this.value = value;
+    this.builder = builder;
+  }
 
-    sub() {
+  add() {
+    //return this.builder.CreateAdd
+  }
 
-    }
+  sub() {}
 
-    mul() {
+  mul() {}
 
-    }
-
-    div() {
-
-    }
+  div() {}
 }
 
-
 module.exports = {
-    LetterInteger
+  LetterInteger,
 };
