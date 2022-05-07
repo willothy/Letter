@@ -1,13 +1,5 @@
 import { 
-    ConstantInt,
-    ConstantFP, 
-    PointerType,
-    ArrayType, 
-    APInt,
     Function,
-    Type,
-    FunctionType,
-    BasicBlock,
     LLVMContext, 
     Module, 
     IRBuilder 
@@ -35,20 +27,20 @@ export default class Compiler {
     convertValue = Utils.convertValue;
 
     // Generators
-    Program = Generators.Program;
-    BlockStatement = Generators.BlockStatement;
-    ReturnStatement = Generators.ReturnStatement;
-    FunctionDeclaration = Generators.FunctionDeclaration;
-    ExpressionStatement = Generators.ExpressionStatement;
-    ExternDeclaration = Generators.ExternDeclaration;
-    VariableStatement = Generators.VariableStatement;
-    CallExpression = Generators.CallExpression;
-    AssignmentExpression = Generators.AssignmentExpression;
-    BinaryExpression = Generators.BinaryExpression;
-    Identifier = Generators.Identifier;
-    NumericLiteral = Generators.NumericLiteral;
-    CharLiteral = Generators.CharLiteral;
-    StringLiteral = Generators.StringLiteral;
+    private Program = Generators.Program;
+    private BlockStatement = Generators.BlockStatement;
+    private ReturnStatement = Generators.ReturnStatement;
+    private FunctionDeclaration = Generators.FunctionDeclaration;
+    private ExpressionStatement = Generators.ExpressionStatement;
+    private ExternDeclaration = Generators.ExternDeclaration;
+    private VariableStatement = Generators.VariableStatement;
+    private CallExpression = Generators.CallExpression;
+    private AssignmentExpression = Generators.AssignmentExpression;
+    private BinaryExpression = Generators.BinaryExpression;
+    private Identifier = Generators.Identifier;
+    private NumericLiteral = Generators.NumericLiteral;
+    private CharLiteral = Generators.CharLiteral;
+    private StringLiteral = Generators.StringLiteral;
 
     constructor(moduleName) {
         this.context = new LLVMContext();
