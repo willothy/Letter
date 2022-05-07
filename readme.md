@@ -7,8 +7,6 @@ Letter is a compiler project built in TypeScript using the [llvm-bindings](https
 
 Letter is functional-only at the moment, though the parser supports objects and I plan on implementing them.
 
-Since I'm working on integrating LLVM, only some of the below info is current. 
-
 Since Letter compiles using LLVM, it is compatible with C and C++. This hasn't been tested much, but there's an example of a Letter function being called from a C program in the `/example/c-link/` folder.
 
 Letter requires an installation of LLVM 13. The [llvm-bindings](https://github.com/ApsarasX/llvm-bindings) readme has good installation instructions.
