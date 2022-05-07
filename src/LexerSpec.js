@@ -1,7 +1,6 @@
 /** Tokenizer Spec
  * 
  */
-
 const Spec = [
     // Whitespace:
     [/^\s+/, null],

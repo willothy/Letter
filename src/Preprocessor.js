@@ -5,12 +5,21 @@ const { join, resolve } = require('path');
 
 class PreprocessorError extends Error {}
 
+/**
+ * Preprocessor for Letter 
+ */
 class Preprocessor {
     constructor() {
         this.tokenizer = new Tokenizer();
         this._basePath = '';
     }
 
+    /**
+     * External preprocessor interface
+     * @param {*} mainFile 
+     * @param {*} basePath 
+     * @returns minified, preprocessed program.
+     */
     exec(mainFile, basePath) {
         this._basePath = basePath;
         const prog = this.preprocess(mainFile);
@@ -30,6 +39,12 @@ class Preprocessor {
         return i;
     }
 
+    /**
+     * Gets lookahead token
+     * @param {*} tokens 
+     * @param {*} index 
+     * @returns 
+     */
     getLookahead (tokens, index) {
         const lookahead = [];
         for (let i = index+1; i < tokens.length && lookahead.length < 2; i++) {
@@ -40,7 +55,11 @@ class Preprocessor {
         return lookahead;
     }
 
-    // Resolves path 
+    /**
+     * Resolves dependency path
+     * @param {*} dep 
+     * @returns 
+     */
     getDependencyPath (dep) {
         return join(
             this._basePath + '/', 
@@ -48,6 +67,12 @@ class Preprocessor {
         );
     }
 
+    /**
+     * Main preprocessor function
+     * @param {*} mainFile 
+     * @param {*} _symbols 
+     * @returns 
+     */
     preprocess(mainFile, _symbols=null) {
         let program = [];
         let includes = [];

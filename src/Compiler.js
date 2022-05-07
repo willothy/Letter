@@ -5,6 +5,12 @@ class CompilerError extends Error {}
 class TypeError extends CompilerError {}
 
 // https://stackoverflow.com/a/28191966/6884167
+/**
+ * 
+ * @param {Object} object 
+ * @param {Value} value 
+ * @returns First key whose value is equal to value.
+ */
 function getKeyByValue(object, value) {
     return Object.keys(object).find(key => object[key] === value);
 }
@@ -17,6 +23,11 @@ class Compiler {
         this.builder = new llvm.IRBuilder(this.context);
     }
 
+    /**
+     * Returns an LLVM primitive type from a type label string
+     * @param {String} typeStr 
+     * @returns LLVM type
+     */
     convertType(typeStr) {
         switch (typeStr) {
             case 'int':
@@ -36,6 +47,12 @@ class Compiler {
         }
     }
 
+    /**
+     * 
+     * @param {llvm.Type} type 
+     * @param {Value} value 
+     * @returns llvm value from JS value (WIP)
+     */
     convertValue(type, value) {
         switch (type) {
             case 'int':
@@ -51,11 +68,23 @@ class Compiler {
         }
     }
     
+    /**
+     * External interface for driver
+     * @param {AST} ast 
+     * @returns LLVM IR as text
+     */
     compile(ast) {
         this.codegen(ast);
         return this.module.print();
     }
 
+    /**
+     * 
+     * @param {llvm.Value} value 
+     * @param {String} expectedType 
+     * @param {String} gotType 
+     * @returns new value of expected type if possible, else null
+     */
     handleNumericTypecasts(value, expectedType, gotType) {
         if (expectedType === 'Double' && gotType === 'Float') {
             return this.builder.CreateFPExt(value, this.builder.getDoubleTy(), 'flt_upcast');
@@ -71,6 +100,13 @@ class Compiler {
         return null;
     }
 
+    /**
+     * Checks if value is of type expectedType, attempts typecasts if not
+     * @param {llvm.Value} value 
+     * @param {String} expectedType 
+     * @returns input value or post-typecast value
+     * @throws TypeError if types are different and typecast fails.
+     */
     checkType(value, expectedType) {
         if (!llvm.Type.isSameType(value.getType(), expectedType)) {
             let exp = getKeyByValue(llvm.Type.TypeID, expectedType.getTypeID());
@@ -92,6 +128,11 @@ class Compiler {
         return value;
     }
 
+    /**
+     * Check if value is float
+     * @param {llvm.Value}} val 
+     * @returns boolean
+     */
     isFloat(val) {
         try {
             const test = val.getType().isFloatingPointTy();
@@ -101,10 +142,20 @@ class Compiler {
         }
     }
 
+    /**
+     * Check if value is integer
+     * @param {llvm.Value} val 
+     * @returns 
+     */
     isInteger(val) {
         return val.getType().isIntegerTy(32);
     }
 
+    /**
+     * 
+     * @param {} param 
+     * @returns param tyupe as LLVM.Type 
+     */
     resolveArrayParam(param) {
         let resolved = llvm.PointerType.get(this.convertType(param.type.type), 0);
         for (let i = 1; i < param.type.dimensions; i++) {
@@ -113,6 +164,11 @@ class Compiler {
         return resolved;
     }
 
+    /**
+     * 
+     * @param {returnType} returnType 
+     * @returns returnType as llvm.Type
+     */
     resolveFuncType(returnType) {
         if (returnType.arrayType === false) {
             return this.convertType(returnType.type);
@@ -126,6 +182,11 @@ class Compiler {
     }
 
     // https://stackoverflow.com/a/48682135/6884167
+    /**
+     * Fix escape characters
+     * @param {String} s 
+     * @returns unescaped string
+     */
     unbackslash(s) {
         return s.replace(/\\([\\rnt'"])/g, function(match, p1) {
             const codes = []
@@ -141,6 +202,13 @@ class Compiler {
         });
     }
 
+    /**
+     * Main codegen function
+     * @param {AST} ast 
+     * @param {Object} symbols 
+     * @param {llvm.Function} fn 
+     * @returns {llvm.Value} or null
+     */
     codegen(ast, symbols = {}, fn=null) {
         let current = ast;
 
@@ -151,9 +219,6 @@ class Compiler {
             for (const statement of current.body) {
                 this.codegen(statement, symbols);
             }
-            /*for (const [key, s] of Object.entries(symbols)) {
-                
-            }*/
         }
         if (current.type === 'BlockStatement') {
             for (const statement of current.body) {
@@ -172,7 +237,6 @@ class Compiler {
                     params.push(this.convertType(param.type.type));
                 } else {
                     const r = this.resolveArrayParam(param);
-                    //console.log(r);
                     params.push(r);
                 }
             }
@@ -316,9 +380,6 @@ class Compiler {
                     this.builder.getInt32(0)
                 ]
             );;
-            //return llvm.ArrayType.get(this.builder.getInt8Ty(), value.length);//.getBitCast(string, llvm.PointerType.get(this.builder.getInt8Ty(), 0));// .get(, string);//llvm.ConstantArray.get(llvm.ArrayType.get(this.builder.getInt8Ty(), value.length), string);
-            //return llvm.PointerType.get(llvm.ArrayType.get(baseType, value.length), 0);
-            //return this.builder.CreateGlobalStringPtr(value, 'anon_str', 0, this.module);
         }
         if (current.type === 'Identifier') {
             const info = symbols[current.name];
