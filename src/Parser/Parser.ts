@@ -1,6 +1,7 @@
-import Tokenizer from './Tokenizer';
+import Tokenizer from '../Tokenizer/Tokenizer';
+import Preprocessor from '../Preprocessor/Preprocessor';
 import NodeFactory from './ASTFactory';
-import Preprocessor from './Preprocessor';
+
 
 export default class Parser {
     _program;

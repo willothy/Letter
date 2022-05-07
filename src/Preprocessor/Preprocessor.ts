@@ -1,9 +1,9 @@
-import Tokenizer from './Tokenizer';
+import Tokenizer from '../Tokenizer/Tokenizer';
 
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
-import PreprocessorError from './Error/PreprocessorError';
+import PreprocessorError from '../Error/PreprocessorError';
 
 /**
  * Preprocessor for Letter 

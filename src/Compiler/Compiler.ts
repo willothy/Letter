@@ -4,8 +4,8 @@ import {
     IRBuilder 
 } from "llvm-bindings"
 
-import Generators from './Generators/';
-import Utils from './Utils/';
+import Generators from './Generators';
+import Utils from './Utils';
 
 export default class Compiler {
 
