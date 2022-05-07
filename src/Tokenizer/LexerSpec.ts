@@ -79,7 +79,7 @@ const Spec = [
     [/^#define/, 'PRE_DEFINE'],
 
     // Filename
-    [/\@[^\@\n]+/, 'FILENAME'],
+    //[/\@[^\@\n]+/, 'FILENAME'],
 
     // Numbers: 
     //[/^(?![\.]?$)(?=\.?\d+)[\d]*\.?[\d]*(?:[e][\d]+)?(?=\W*)/, 'NUMBER'],

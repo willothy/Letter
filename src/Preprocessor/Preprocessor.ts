@@ -1,6 +1,6 @@
 import Tokenizer from '../Tokenizer/Tokenizer';
 
-import { readFileSync } from 'fs';
+import { readFileSync, constants, accessSync } from 'fs';
 import { join } from 'path';
 
 import PreprocessorError from '../Error/PreprocessorError';
@@ -64,10 +64,23 @@ export default class Preprocessor {
      * @returns 
      */
     getDependencyPath (dep) {
-        return join(
+        const path = join(
             `${this._basePath}/`, 
-            dep.trim().substr(1, dep.length-1) // remove @ symbol and whitespace
+            dep.trim().substr(1, dep.length-2) // remove " symbols and whitespace
         );
+
+        if (!this.checkFileExist(path))
+            throw new Error(`File ${dep} does not exist in ${this._basePath}`);
+        return path;
+    }
+
+    checkFileExist(path): boolean {
+        try {
+            accessSync(path, constants.R_OK);
+            return true;
+        } catch (e) {
+            return false;
+        }
     }
 
     /**
@@ -92,16 +105,16 @@ export default class Preprocessor {
             
             if (tokens[i].type === 'PRE_DEFINE') {
                 if (lookahead[0].type === 'IDENTIFIER') {
-                    symbols[lookahead[0].value] = String(lookahead[1].value);
+                    symbols[lookahead[0].value] = lookahead[1] ? String(lookahead[1].value) : "";
                     i+=2;
                 } else {
                     throw new PreprocessorError(`Unexpected token "${JSON.stringify(lookahead[0])}", 
                         next: "${JSON.stringify(lookahead[1])}"`);
                 }            
             } else if (tokens[i].type === 'PRE_INCLUDE') {
-                if (lookahead[0].type === 'FILENAME') {
+                if (lookahead[0].type === 'STRING') {
                     const src = readFileSync(this.getDependencyPath(lookahead[0].value), 'utf-8'); 
-                    includes.push(this.preprocess(src, symbols));
+                    includes.push(this.preprocess(src));
                     i+=1;
                 } else {
                     throw new PreprocessorError(`Unexpected token "${JSON.stringify(lookahead[0])}", 

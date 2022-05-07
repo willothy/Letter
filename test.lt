@@ -1,5 +1,6 @@
-#dependency @./example/print.lt
-#dependency @./example/pi.lt
+#define pi 3.1415926
+#dependency "example/print.lt"
+
 
 proc float circumference(float radius) {
     return 2 * pi * radius;

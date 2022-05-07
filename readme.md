@@ -21,9 +21,7 @@ Features that are working now:
 - Function definitions (including void)
 - Implicit typecasting of numbers
 - Printing values using the print.lt library (printf wrapper)
-- Strings, Floats, Doubles, and Integers
-
-Known issues: 
+- Strings, Floats, Doubles, and Integers 
 
 Here's an example of a working program in Letter: <br>
 
