@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 const { Parser } = require('./src/Parser');
-const { Evaluator } = require('./src/Evaluator');
 const { Compiler } = require('./src/Compiler');
 
 const { readFileSync } = require('fs');

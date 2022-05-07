@@ -1,0 +1,12 @@
+#dependency @./example/print.lt
+#dependency @./example/pi.lt
+
+proc float circumference(float radius) {
+    return 2 * pi * radius;
+}
+
+proc int main() {
+    let double value = getValue(5.0);
+    printInt(value);
+    return 0;
+}
