@@ -1,4 +1,4 @@
-const { ConstantInt, PointerType, APInt, APFloat, LoadInst, LLVMConstants } = require('llvm-bindings');
+const { ConstantInt, PointerType, APInt, APFloat, LoadInst, LLVMConstants, AllocaInst } = require('llvm-bindings');
 const llvm = require('llvm-bindings');
 
 class CompilerError extends Error {}
@@ -33,6 +33,8 @@ class Compiler {
                 return this.builder.getDoubleTy();
             case 'char':
                 return this.builder.getInt8Ty();
+            case 'string':
+                return this.builder.getInt8PtrTy();
             default:
                 return this.builder.getInt8Ty();                
         }
@@ -153,6 +155,9 @@ class Compiler {
             for (const statement of current.body) {
                 this.codegen(statement, symbols);
             }
+            /*for (const [key, s] of Object.entries(symbols)) {
+                
+            }*/
         }
         if (current.type === 'BlockStatement') {
             for (const statement of current.body) {
@@ -265,6 +270,17 @@ class Compiler {
                 }
             }
         }
+        if (current.type === 'AssignmentExpression') {
+            const info = symbols[current.left.name];
+            this.builder.CreateStore(
+                this.checkType(
+                    this.codegen(current.right, symbols, fn),
+                    info.type
+                ),
+                info.alloc
+            );
+            return this.builder.CreateLoad(info.type, info.alloc, current.left.name);
+        }
         if (current.type === 'NumericLiteral') {
             if (current.valType === 'INTEGER')
                 return llvm.ConstantInt.get(this.builder.getInt32Ty(), current.value, true);
@@ -275,7 +291,7 @@ class Compiler {
             return llvm.ConstantInt.get(this.builder.getInt8Ty(), current.value, false);
         }
         if (current.type === 'StringLiteral') {
-            const value = this.unbackslash(current.value);
+            const value = this.unbackslash(current.value) + '\0';
             const baseType = this.builder.getInt8Ty();
             const arrayType = llvm.ArrayType.get(baseType, value.length);
             const alloc = this.builder.CreateAlloca(arrayType);
@@ -296,7 +312,14 @@ class Compiler {
                     insideElementPtr
                 );
             }
-            return alloc;
+            return this.builder.CreateGEP(
+                arrayType, 
+                alloc, 
+                [
+                    this.builder.getInt32(0), 
+                    this.builder.getInt32(0)
+                ]
+            );;
             //return llvm.ArrayType.get(this.builder.getInt8Ty(), value.length);//.getBitCast(string, llvm.PointerType.get(this.builder.getInt8Ty(), 0));// .get(, string);//llvm.ConstantArray.get(llvm.ArrayType.get(this.builder.getInt8Ty(), value.length), string);
             //return llvm.PointerType.get(llvm.ArrayType.get(baseType, value.length), 0);
             //return this.builder.CreateGlobalStringPtr(value, 'anon_str', 0, this.module);
