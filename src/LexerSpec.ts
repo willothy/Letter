@@ -97,4 +97,4 @@ const Spec = [
     [/^`[^`]*`/m, 'STRING']
 ];
 
-module.exports = {Spec};
+export default Spec;

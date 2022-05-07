@@ -1,13 +1,18 @@
-const {Spec} = require('./LexerSpec.js');
-
-
-const { SyntaxError } = require('./Error/SyntaxError');
+import Spec from './LexerSpec';
 
 /**
  * Tokenizer class
  * Pulls a token from a stream
  */
-class Tokenizer {
+export default class Tokenizer {
+    _program;
+    _cursor;
+    _tokenList;
+
+    constructor() {
+        
+    }
+
     /**
      * Initializes the string
      * @param {*} string 
@@ -103,8 +108,4 @@ class Tokenizer {
         this._cursor += matched[0].length; // Advance cursor
         return matched[0];
     }
-}
-
-module.exports = {
-    Tokenizer
 }

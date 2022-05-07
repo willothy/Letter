@@ -328,4 +328,4 @@ const Factories = {
     SExpressionFactory
 }
 
-module.exports = {Factories};
+export default Factories;

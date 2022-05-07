@@ -1,19 +1,22 @@
-const { Tokenizer } = require("./Tokenizer");
+import Tokenizer from './Tokenizer';
 
-const { readFileSync } = require('fs');
-const { join, resolve } = require('path');
+import { readFileSync } from 'fs';
+import { join, resolve } from 'path';
 
-const { PreprocessorError } = require('./Error/PreprocessorError');
+import PreprocessorError from './Error/PreprocessorError';
 
 /**
  * Preprocessor for Letter 
  */
-class Preprocessor {
+export default class Preprocessor {
+    tokenizer;
+    _basePath;
+
     constructor() {
         this.tokenizer = new Tokenizer();
         this._basePath = '';
     }
-
+    
     /**
      * External preprocessor interface
      * @param {*} mainFile 
@@ -118,8 +121,3 @@ class Preprocessor {
         return program;
     }
 }
-
-
-module.exports = {
-    Preprocessor
-};

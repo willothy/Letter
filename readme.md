@@ -3,7 +3,7 @@
 [![DeepSource](https://deepsource.io/gh/willothy/Letter.svg/?label=active+issues&show_trend=true&token=s7FPYpp55Oo71OQtpE1BL1Hm)](https://deepsource.io/gh/willothy/Letter/?ref=repository-badge)
 [![DeepSource](https://deepsource.io/gh/willothy/Letter.svg/?label=resolved+issues&show_trend=true&token=s7FPYpp55Oo71OQtpE1BL1Hm)](https://deepsource.io/gh/willothy/Letter/?ref=repository-badge)
 
-Letter is a compiler project built in JavaScript/NodeJS using the [llvm-bindings](https://github.com/ApsarasX/llvm-bindings) module. The parser is based off of lectures by [Dmitry Soshnikov](https://github.com/DmitrySoshnikov/). Letter compiles to LLVM IR, which can then be compiled with Clang.
+Letter is a compiler project built in TypeScript using the [llvm-bindings](https://github.com/ApsarasX/llvm-bindings) module. The parser is based off of lectures by [Dmitry Soshnikov](https://github.com/DmitrySoshnikov/). Letter compiles to LLVM IR, which can then be compiled with Clang.
 
 Letter is functional-only at the moment, though the parser supports objects and I plan on implementing them.
 
@@ -33,7 +33,7 @@ The released version is outdated: I'll update this when there's a release with L
 
 Run the compiler using `npm run compile <filename>`. This will run letter and clang, prividing an executable.<br>
 To build an object file, run `npm run object <filename>`.
-The below flags don't work with this command - only with `letter-rdp -f <filename> <flags>` which will generate llvm IR.
+The below flags don't work with this command - only with `npx ts-node ./letter.ts -f <filename> <flags>` which will generate llvm IR.
 You then need to compile this IR using clang.
 <br>
 

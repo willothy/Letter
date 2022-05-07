@@ -1,7 +1,21 @@
-const { ConstantInt, PointerType, APInt, APFloat, LoadInst, LLVMConstants, AllocaInst } = require('llvm-bindings');
-const llvm = require('llvm-bindings');
+import { 
+    ConstantInt,
+    ConstantFP, 
+    PointerType,
+    ArrayType, 
+    APInt,
+    Function,
+    APFloat,
+    Type,
+    FunctionType,
+    BasicBlock,
+    LLVMContext, 
+    Module, 
+    IRBuilder, 
+    AllocaInst 
+} from "llvm-bindings"
 
-const { TypeError } = require('./Error/TypeError');
+
 
 // https://stackoverflow.com/a/28191966/6884167
 /**
@@ -14,12 +28,16 @@ function getKeyByValue(object, value) {
     return Object.keys(object).find(key => object[key] === value);
 }
 
-class Compiler {
+export default class Compiler {
+
+    context: LLVMContext;
+    module: Module;
+    builder: IRBuilder;
 
     constructor(moduleName) {
-        this.context = new llvm.LLVMContext();
-        this.module = new llvm.Module(moduleName, this.context);
-        this.builder = new llvm.IRBuilder(this.context);
+        this.context = new LLVMContext();
+        this.module = new Module(moduleName, this.context);
+        this.builder = new IRBuilder(this.context);
     }
 
     /**
@@ -48,22 +66,22 @@ class Compiler {
 
     /**
      * 
-     * @param {llvm.Type} type 
+     * @param {Type} type 
      * @param {Value} value 
      * @returns llvm value from JS value (WIP)
      */
     convertValue(type, value) {
         switch (type) {
             case 'int':
-                return llvm.ConstantInt.get(this.builder.getInt64Ty(), parseInt(value, 10), true);
+                return ConstantInt.get(this.builder.getInt64Ty(), parseInt(value, 10), true);
             case 'bool':
-                return new llvm.APInt(1, parseInt(`${value}`, 10), false);
+                return ConstantInt.get(this.builder.getInt1Ty(), value, false);
             case 'float':
-                return new llvm.ConstantFP.get(this.builder.getFloatTy(), parseFloat(value), true);
+                return ConstantFP.get(this.builder.getFloatTy(), parseFloat(value));
             case 'double':
-                return new llvm.ConstantFP.get(this.builder.getDoubleTy(), parseFloat(value), true);
+                return ConstantFP.get(this.builder.getDoubleTy(), parseFloat(value));
             case 'char':
-                return new llvm.ConstantInt.get(this.builder.getInt8Ty(), value, false);             
+                return ConstantInt.get(this.builder.getInt8Ty(), value, false);             
         }
     }
     
@@ -79,7 +97,7 @@ class Compiler {
 
     /**
      * 
-     * @param {llvm.Value} value 
+     * @param {Value} value 
      * @param {String} expectedType 
      * @param {String} gotType 
      * @returns new value of expected type if possible, else null
@@ -101,17 +119,17 @@ class Compiler {
 
     /**
      * Checks if value is of type expectedType, attempts typecasts if not
-     * @param {llvm.Value} value 
+     * @param {Value} value 
      * @param {String} expectedType 
      * @returns input value or post-typecast value
      * @throws TypeError if types are different and typecast fails.
      */
     checkType(value, expectedType) {
-        if (!llvm.Type.isSameType(value.getType(), expectedType)) {
-            let exp = getKeyByValue(llvm.Type.TypeID, expectedType.getTypeID());
+        if (!Type.isSameType(value.getType(), expectedType)) {
+            let exp = getKeyByValue(Type.TypeID, expectedType.getTypeID());
             exp = exp.substring(0, exp.length-4);
 
-            let got = getKeyByValue(llvm.Type.TypeID, value.getType().getTypeID());
+            let got = getKeyByValue(Type.TypeID, value.getType().getTypeID());
             got = got.substring(0, got.length-4)
 
             const v = this.handleNumericTypecasts(value, exp, got);
@@ -129,7 +147,7 @@ class Compiler {
 
     /**
      * Check if value is float
-     * @param {llvm.Value}} val 
+     * @param {Value}} val 
      * @returns boolean
      */
     isFloat(val) {
@@ -143,7 +161,7 @@ class Compiler {
 
     /**
      * Check if value is integer
-     * @param {llvm.Value} val 
+     * @param {Value} val 
      * @returns 
      */
     isInteger(val) {
@@ -156,9 +174,9 @@ class Compiler {
      * @returns param tyupe as LLVM.Type 
      */
     resolveArrayParam(param) {
-        let resolved = llvm.PointerType.get(this.convertType(param.type.type), 0);
+        let resolved = PointerType.get(this.convertType(param.type.type), 0);
         for (let i = 1; i < param.type.dimensions; i++) {
-            resolved = llvm.PointerType.get(resolved, 0);
+            resolved = PointerType.get(resolved, 0);
         }
         return resolved;
     }
@@ -166,15 +184,15 @@ class Compiler {
     /**
      * 
      * @param {returnType} returnType 
-     * @returns returnType as llvm.Type
+     * @returns returnType as Type
      */
     resolveFuncType(returnType) {
         if (returnType.arrayType === false) {
             return this.convertType(returnType.type);
         } else {
-            let resolved = llvm.PointerType.get(this.convertType(returnType.type), 0);
+            let resolved = PointerType.get(this.convertType(returnType.type), 0);
             for (let i = 1; i < returnType.dimensions; i++) {
-                resolved = llvm.PointerType.get(resolved, 0);
+                resolved = PointerType.get(resolved, 0);
             }
             return resolved;
         }
@@ -205,14 +223,14 @@ class Compiler {
      * Main codegen function
      * @param {AST} ast 
      * @param {Object} symbols 
-     * @param {llvm.Function} fn 
-     * @returns {llvm.Value} or null
+     * @param {Function} fn 
+     * @returns {Value} or null
      */
     codegen(ast, symbols = {}, fn=null) {
         const current = ast;
 
         if (current.type === 'Program') {
-            const mainEntry = llvm.BasicBlock.Create(this.context, 'entry');
+            const mainEntry = BasicBlock.Create(this.context, 'entry');
             this.builder.SetInsertPoint(mainEntry);
 
             for (const statement of current.body) {
@@ -242,10 +260,10 @@ class Compiler {
             
             const returnType = current.returnType.type === 'void' ? this.builder.getVoidTy() : this.resolveFuncType(current.returnType);
             
-            const funcType = llvm.FunctionType.get(returnType, params, false);
-            const func = llvm.Function.Create(
+            const funcType = FunctionType.get(returnType, params, false);
+            const func = Function.Create(
                 funcType,
-                llvm.Function.LinkageTypes.ExternalLinkage,
+                Function.LinkageTypes.ExternalLinkage,
                 current.name.name,
                 this.module
             );
@@ -260,7 +278,7 @@ class Compiler {
                     isArg: true
                 };
             }
-            const entryBB = llvm.BasicBlock.Create(this.context, 'entry', func);
+            const entryBB = BasicBlock.Create(this.context, 'entry', func);
             this.builder.SetInsertPoint(entryBB);
             this.codegen(current.body, {
                 ...symbols, 
@@ -296,7 +314,7 @@ class Compiler {
             
             this.module.getOrInsertFunction(
                 current.name.name,
-                llvm.FunctionType.get(this.convertType(current.type.type), params, true) 
+                FunctionType.get(this.convertType(current.type.type), params, true) 
             );
         }
         if (current.type === 'VariableStatement') {
@@ -304,7 +322,7 @@ class Compiler {
                 const type = this.convertType(declaration.valType.type)
                 const alloc = this.builder.CreateAlloca(
                     type, 
-                    llvm.ConstantInt.get(this.builder.getInt8Ty(), 0, false), 
+                    ConstantInt.get(this.builder.getInt8Ty(), 0, false), 
                     declaration.id.name
                 ); 
                 
@@ -336,15 +354,15 @@ class Compiler {
             return this.builder.CreateLoad(info.type, info.alloc, current.left.name);
         }
         if (current.type === 'NumericLiteral') {
-            return current.valType === 'INTEGER' ? llvm.ConstantInt.get(this.builder.getInt32Ty(), current.value, true) : llvm.ConstantFP.get(this.builder.getFloatTy(), current.value, true);
+            return current.valType === 'INTEGER' ? ConstantInt.get(this.builder.getInt32Ty(), current.value, true) : ConstantFP.get(this.builder.getFloatTy(), current.value);
         }
         if (current.type === 'CharLiteral') {
-            return llvm.ConstantInt.get(this.builder.getInt8Ty(), current.value, false);
+            return ConstantInt.get(this.builder.getInt8Ty(), current.value, false);
         }
         if (current.type === 'StringLiteral') {
             const value = `${this.unbackslash(current.value)}\0`;
             const baseType = this.builder.getInt8Ty();
-            const arrayType = llvm.ArrayType.get(baseType, value.length);
+            const arrayType = ArrayType.get(baseType, value.length);
             const alloc = this.builder.CreateAlloca(arrayType);
             
             for (let i = 0; i < value.length; i++) {
@@ -359,7 +377,7 @@ class Compiler {
                 );
                 
                 this.builder.CreateStore(
-                    llvm.ConstantInt.get(this.context, new APInt(8, char.charCodeAt(0), false)),
+                    ConstantInt.get(this.context, new APInt(8, char.charCodeAt(0), false)),
                     insideElementPtr
                 );
             }
@@ -383,7 +401,7 @@ class Compiler {
             const leftType = left.getType();
             const rightType = right.getType();
             
-            if (llvm.Type.isSameType(leftType, rightType)) {
+            if (Type.isSameType(leftType, rightType)) {
                 if (leftType.isIntegerTy(32)) {
                     if (current.operator === '+') {
                         return this.builder.CreateAdd(left, right, 'addtmp');
@@ -434,7 +452,3 @@ class Compiler {
     }
 
 }
-
-module.exports = {
-    Compiler
-};

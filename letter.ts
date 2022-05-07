@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
-const { Parser } = require('./src/Parser');
-const { Compiler } = require('./src/Compiler');
+import Parser from './src/Parser';
+import Compiler from './src/Compiler';
 
-const { readFileSync } = require('fs');
-const { dirname, resolve, basename } = require('path');
+import { readFileSync } from "fs";
+import { dirname, resolve, basename } from 'path';
 
 Error.stackTraceLimit = 0; // Don't print js stack trace when --stack isn't enabled
 

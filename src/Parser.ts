@@ -1,15 +1,19 @@
-
-const {Tokenizer} = require('./Tokenizer');
-const {Preprocessor} = require('./Preprocessor');
-const {Factories} = require('./ASTFactories');
-
-const { SyntaxError } = require('./Error/SyntaxError');
+import Tokenizer from './Tokenizer';
+import Factories from './ASTFactories';
+import Preprocessor from './Preprocessor';
 
 const AST_MODE = 'default';
 
 const factory = Factories[AST_MODE];
 
-class Parser {
+export default class Parser {
+    _program;
+    _tokenizer;
+    _preprocessor;
+    _combineFiles;
+    _lookahead;
+    _last;
+    tokenList;
     /**
      * Initializes the parser
      * 
@@ -962,8 +966,4 @@ class Parser {
         this._lookahead = this._tokenizer.getNextToken();
         return token;
     }
-}
-
-module.exports = {
-    Parser
 }
