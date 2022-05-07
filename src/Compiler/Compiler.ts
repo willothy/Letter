@@ -58,6 +58,13 @@ export default class Compiler {
         return this.module.print();
     }
 
+    /**
+     * Codegen switch statement wrapper
+     * @param node 
+     * @param symbols 
+     * @param fn 
+     * @returns 
+     */
     codegen(node, symbols:Object={}, fn:llvm.Function=undefined) {
         switch (node.type) {
             case 'Program':
