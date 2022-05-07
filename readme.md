@@ -25,9 +25,9 @@ Here's an example of a working program in Letter: <br>
 
 <br>
 Use:<br>
-The released version is outdated: I'll update this when there's a release with LLVM working fully.
+The released version is outdated: I'll update this when there's a release with LLVM working fully. For now, it must be run from node.
 
-Run the compiler using `./letter-rdp -f ./filename.lt` or `./bin/letter.rdp -e "statement"`.<br>
+Run the compiler using `./letter-rdp -f ./filename.lt -i` or `./letter-rdp -e "statement" -i`.<br>
 <br>
 
 Current flags available:
@@ -35,9 +35,9 @@ Tested:
 - `-s, --stack`: Prints the full JS stack on error. Normally, errors just print the message without stack trace when no debug flags are set.
 - `-t, --tokens`: Prints a list of all tokens in the program, including from imported files.
 - `-a, --ast`: Prints the full program's AST representation in JSON.
+- `-i, --emit-ir`: Emits LLVM IR for compilation.
 
 Untested with new versions:
-- `-d, --debug`: Prints each node type and operation as it's completed by the evaluator.
 - `-m, --minify`: Combines all code into one file, and turns it into one line.
     - Recommended use: `./bin/letter.rdp -f filename --minify > file.min.lt`
 
