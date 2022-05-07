@@ -23,7 +23,7 @@ export default class Preprocessor {
      * @param {*} basePath 
      * @returns minified, preprocessed program.
      */
-    exec(mainFile, basePath) {
+    exec(mainFile, basePath): string  {
         this._basePath = basePath;
         const prog = this.preprocess(mainFile);
         //console.log(prog.join(' '));
