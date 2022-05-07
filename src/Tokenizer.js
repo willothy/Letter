@@ -42,7 +42,7 @@ class Tokenizer {
         const tokens = [];
         while(this.hasMoreTokens()) {
             const tok = this.getNextToken(nulls);
-            if (tok == null) return tokens;
+            if (tok === null) return tokens;
             else tokens.push(tok);
         }
         return tokens;
@@ -61,9 +61,9 @@ class Tokenizer {
 
         for (const [regexp, tokenType] of Spec) {
             const tokenValue = this._match(regexp, string);
-            if (tokenValue == null) continue;
+            if (tokenValue === null) continue;
 
-            if (tokenType == null) {
+            if (tokenType === null) {
                 if (nulls == true) {
                     return {
                         type: tokenType,
@@ -96,7 +96,7 @@ class Tokenizer {
      */
     _match(regexp, string) {
         let matched = regexp.exec(string);
-        if (matched == null) return null;
+        if (matched === null) return null;
         this._cursor += matched[0].length; // Advance cursor
         return matched[0];
     }
