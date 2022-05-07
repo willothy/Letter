@@ -62,7 +62,7 @@ class Preprocessor {
      */
     getDependencyPath (dep) {
         return join(
-            this._basePath + '/', 
+            `${this._basePath}/`, 
             dep.trim().substr(1, dep.length-1) // remove @ symbol and whitespace
         );
     }
@@ -75,14 +75,14 @@ class Preprocessor {
      */
     preprocess(mainFile, _symbols=null) {
         let program = [];
-        let includes = [];
-        let symbols = _symbols ?? Object.create(null);
+        const includes = [];
+        const symbols = _symbols ?? Object.create(null);
 
         this.tokenizer.init(mainFile, null);
-        let tokens = this.tokenizer.exec(false);
+        const tokens = this.tokenizer.exec(false);
 
-        for (var i = 0; i < tokens.length; i++) {
-            let lookahead = [
+        for (let i = 0; i < tokens.length; i++) {
+            const lookahead = [
                 tokens[i+1],
                 tokens[i+2]
             ];
@@ -97,7 +97,7 @@ class Preprocessor {
                 }            
             } else if (tokens[i].type === 'PRE_INCLUDE') {
                 if (lookahead[0].type === 'FILENAME') {
-                    let src = readFileSync(this.getDependencyPath(lookahead[0].value), 'utf-8'); 
+                    const src = readFileSync(this.getDependencyPath(lookahead[0].value), 'utf-8'); 
                     includes.push(this.preprocess(src, symbols));
                     i+=1;
                 } else {

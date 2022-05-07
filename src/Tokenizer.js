@@ -98,7 +98,7 @@ class Tokenizer {
      * @returns {String} match or null
      */
     _match(regexp, string) {
-        let matched = regexp.exec(string);
+        const matched = regexp.exec(string);
         if (matched === null) return null;
         this._cursor += matched[0].length; // Advance cursor
         return matched[0];

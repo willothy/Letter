@@ -55,9 +55,9 @@ class Compiler {
     convertValue(type, value) {
         switch (type) {
             case 'int':
-                return llvm.ConstantInt.get(this.builder.getInt64Ty(), parseInt(value), true);
+                return llvm.ConstantInt.get(this.builder.getInt64Ty(), parseInt(value, 10), true);
             case 'bool':
-                return new llvm.APInt(1, parseInt(`${value}`), false);
+                return new llvm.APInt(1, parseInt(`${value}`, 10), false);
             case 'float':
                 return new llvm.ConstantFP.get(this.builder.getFloatTy(), parseFloat(value), true);
             case 'double':
@@ -117,7 +117,7 @@ class Compiler {
             const v = this.handleNumericTypecasts(value, exp, got);
             if (v) return v;
             
-            let typeErrorMessage = `Expected type ${
+            const typeErrorMessage = `Expected type ${
                 exp
             }, got ${
                 got
@@ -209,7 +209,7 @@ class Compiler {
      * @returns {llvm.Value} or null
      */
     codegen(ast, symbols = {}, fn=null) {
-        let current = ast;
+        const current = ast;
 
         if (current.type === 'Program') {
             const mainEntry = llvm.BasicBlock.Create(this.context, 'entry');
@@ -283,7 +283,7 @@ class Compiler {
             );
         }
         if (current.type === 'ExternDeclaration') {
-            let params = [];
+            const params = [];
             for (const param of current.params) {
                 if (param.type.arrayType === false) {
                     params.push(this.convertType(param.type.type));
@@ -342,7 +342,7 @@ class Compiler {
             return llvm.ConstantInt.get(this.builder.getInt8Ty(), current.value, false);
         }
         if (current.type === 'StringLiteral') {
-            const value = this.unbackslash(current.value) + '\0';
+            const value = `${this.unbackslash(current.value)}\0`;
             const baseType = this.builder.getInt8Ty();
             const arrayType = llvm.ArrayType.get(baseType, value.length);
             const alloc = this.builder.CreateAlloca(arrayType);
