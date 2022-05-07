@@ -17,7 +17,7 @@ export default class Tokenizer {
      * Initializes the string
      * @param {*} string 
      */
-    init(string, tokenList) {
+    init(string, tokenList): void  {
         this._program = string;
         this._cursor = 0;
 
@@ -30,7 +30,7 @@ export default class Tokenizer {
      * Determine whether there are more tokens in the string
      * @returns bool
      */
-    hasMoreTokens() {
+    hasMoreTokens(): boolean  {
         return this._cursor < this._program.length;
     }
 
@@ -38,7 +38,7 @@ export default class Tokenizer {
      * Determines whether tokenizer has reached end of file
      * @returns boolean
      */
-    isEOF() {
+    isEOF(): boolean  {
         return this._cursor === this._program.length;
     }
 
