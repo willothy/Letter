@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import Parser from './src/Parser';
-import Compiler from './src/Compiler';
+import Compiler from './src/Compiler/Compiler';
 
 import { readFileSync } from "fs";
 import { dirname, resolve, basename } from 'path';
