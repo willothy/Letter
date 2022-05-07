@@ -11,10 +11,6 @@ function getKeyByValue(object, value) {
 
 class Compiler {
 
-    context;
-    module;
-    builder;
-
     constructor(moduleName) {
         this.context = new llvm.LLVMContext();
         this.module = new llvm.Module(moduleName, this.context);
