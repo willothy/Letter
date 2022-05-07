@@ -1,6 +1,6 @@
 import { ConstantInt } from "llvm-bindings";
 
-export default function VariableStatement(this, node, symbols, fn) {
+export default function VariableStatement(this, node, symbols, fn): void  {
     for (const declaration of node.declarations) {
         const type = this.convertType(declaration.valType.type)
         const alloc = this.builder.CreateAlloca(

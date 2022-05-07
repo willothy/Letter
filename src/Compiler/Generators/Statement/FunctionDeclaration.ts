@@ -1,6 +1,6 @@
 import { FunctionType, Function, BasicBlock } from "llvm-bindings";
 
-export default function FunctionDeclaration(this, node, symbols) {
+export default function FunctionDeclaration(this, node, symbols): void  {
     const params = [];
     const paramSymbols = [];
     for (const param of node.params) {
