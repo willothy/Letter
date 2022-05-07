@@ -1,6 +1,6 @@
 import { FunctionType } from "llvm-bindings";
 
-export default function ExternDeclaration(this, node) {
+export default function ExternDeclaration(this, node): void  {
     const params = [];
     for (const param of node.params) {
         if (param.type.arrayType === false) {

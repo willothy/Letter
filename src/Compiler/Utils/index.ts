@@ -8,7 +8,7 @@ import { ConstantFP, ConstantInt, PointerType, Type } from "llvm-bindings";
  * @param {Value} value 
  * @returns First key whose value is equal to value.
  */
-function getKeyByValue(this, object, value) {
+function getKeyByValue(this, object, value): string  {
     return Object.keys(object).find(key => object[key] === value);
 }
 
@@ -112,7 +112,7 @@ function checkType(this, value, expectedType) {
  * @param {Value}} val 
  * @returns boolean
  */
-function isFloat(this, val) {
+function isFloat(this, val): boolean  {
     try {
         const test = val.getType().isFloatingPointTy();
         return true;
