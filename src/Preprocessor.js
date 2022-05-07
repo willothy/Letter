@@ -35,7 +35,7 @@ class Preprocessor {
      */
     getNextTokenDist (tokens, current) {
         let i = current+1;
-        while(tokens[i] == null) i++;
+        while(tokens[i] === null) i++;
         return i;
     }
 
@@ -48,7 +48,7 @@ class Preprocessor {
     getLookahead (tokens, index) {
         const lookahead = [];
         for (let i = index+1; i < tokens.length && lookahead.length < 2; i++) {
-            if (tokens[i].type != null) {
+            if (tokens[i].type !== null) {
                 lookahead.push(tokens[i]);
             }
         }
