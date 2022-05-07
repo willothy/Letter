@@ -241,11 +241,7 @@ class Compiler {
             }
             
             let returnType;
-            if (current.returnType.type === 'void') {
-                returnType = this.builder.getVoidTy();
-            } else {
-                returnType = this.resolveFuncType(current.returnType);
-            }
+            returnType = current.returnType.type === 'void' ? this.builder.getVoidTy() : this.resolveFuncType(current.returnType);
             
             const funcType = llvm.FunctionType.get(returnType, params, false);
             const func = llvm.Function.Create(
@@ -341,10 +337,7 @@ class Compiler {
             return this.builder.CreateLoad(info.type, info.alloc, current.left.name);
         }
         if (current.type === 'NumericLiteral') {
-            if (current.valType === 'INTEGER')
-                return llvm.ConstantInt.get(this.builder.getInt32Ty(), current.value, true);
-            else
-                return llvm.ConstantFP.get(this.builder.getFloatTy(), current.value, true);
+            return current.valType === 'INTEGER' ? llvm.ConstantInt.get(this.builder.getInt32Ty(), current.value, true) : llvm.ConstantFP.get(this.builder.getFloatTy(), current.value, true);
         }
         if (current.type === 'CharLiteral') {
             return llvm.ConstantInt.get(this.builder.getInt8Ty(), current.value, false);
@@ -382,10 +375,7 @@ class Compiler {
         }
         if (current.type === 'Identifier') {
             const info = symbols[current.name];
-            if (info.isArg)
-                return info.alloc;
-            else
-                return this.builder.CreateLoad(info.type, info.alloc, 'tmp');
+            return info.isArg ? info.alloc : this.builder.CreateLoad(info.type, info.alloc, 'tmp');
         }
         if (current.type === 'BinaryExpression') {
             let left = this.codegen(current.left, symbols);
