@@ -3,7 +3,7 @@ const { Tokenizer } = require("./Tokenizer");
 const { readFileSync } = require('fs');
 const { join, resolve } = require('path');
 
-class PreprocessorError extends Error {}
+const { PreprocessorError } = require('./Error/PreprocessorError');
 
 /**
  * Preprocessor for Letter 

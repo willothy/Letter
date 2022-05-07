@@ -1,5 +1,8 @@
 const {Spec} = require('./LexerSpec.js');
 
+
+const { SyntaxError } = require('./Error/SyntaxError');
+
 /**
  * Tokenizer class
  * Pulls a token from a stream

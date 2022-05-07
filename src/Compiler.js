@@ -1,8 +1,7 @@
 const { ConstantInt, PointerType, APInt, APFloat, LoadInst, LLVMConstants, AllocaInst } = require('llvm-bindings');
 const llvm = require('llvm-bindings');
 
-class CompilerError extends Error {}
-class TypeError extends CompilerError {}
+const { TypeError } = require('./Error/TypeError');
 
 // https://stackoverflow.com/a/28191966/6884167
 /**

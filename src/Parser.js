@@ -3,6 +3,8 @@ const {Tokenizer} = require('./Tokenizer');
 const {Preprocessor} = require('./Preprocessor');
 const {Factories} = require('./ASTFactories');
 
+const { SyntaxError } = require('./Error/SyntaxError');
+
 const AST_MODE = 'default';
 
 const factory = Factories[AST_MODE];
