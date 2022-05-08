@@ -21,10 +21,13 @@ export default class ASTNode {
     returnType?: any;
     params?: any;
     computed?: any;
-    object: any;
-    property: any;
-    callee: any;
-    superClass: any;
+    object?: any;
+    property?: any;
+    callee?: any;
+    superClass?: any;
+    typeStr?: string;
+    dimensions?: number;
+    arrayType?: boolean;
 
     constructor(
         type: string, { 
@@ -52,7 +55,10 @@ export default class ASTNode {
             object,
             property,
             callee,
-            superClass
+            superClass,
+            typeStr,
+            dimensions,
+            arrayType,
         }: { 
             body?: ASTNode,
             expression?: ASTNode,
@@ -79,6 +85,9 @@ export default class ASTNode {
             property?: any,
             callee?: any,
             superClass?: any,
+            typeStr?: string,
+            dimensions?: number,
+            arrayType?: boolean,
         } = {}
     ) {
         this.type = type;
@@ -107,5 +116,8 @@ export default class ASTNode {
         this.property = property;
         this.callee = callee;
         this.superClass = superClass;
+        this.typeStr = typeStr;
+        this.dimensions = dimensions;
+        this.arrayType = arrayType;
     }
 }

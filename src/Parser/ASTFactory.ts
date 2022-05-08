@@ -36,6 +36,14 @@ export default class NodeFactory {
     static ExpressionStatement(expression: ASTNode): ASTNode {
         return new ASTNode('ExpressionStatement', { expression });
     }
+
+    static Type(typeStr: string, arrayType: boolean, dimensions: number) {
+        return new ASTNode('Type', {
+            typeStr,
+            dimensions,
+            arrayType
+        });
+    }
     
     /**
      * 

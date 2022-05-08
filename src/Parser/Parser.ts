@@ -4,13 +4,14 @@ import NodeFactory from './ASTFactory';
 
 
 export default class Parser {
-    _program;
-    _tokenizer;
-    _preprocessor;
-    _combineFiles;
-    _lookahead;
-    _last;
-    tokenList;
+    private _program;
+    private _tokenizer;
+    private _preprocessor;
+    private _combineFiles;
+    private _lookahead;
+    private _last;
+
+    public tokenList;
     /**
      * Initializes the parser
      * 
@@ -415,7 +416,6 @@ export default class Parser {
      *      | TYPE MULTIPLICATIVE_OPERATOR 
      */
     Type() {
-        // return this._eat('TYPE').value;
         const baseType = this._eat('IDENTIFIER').value;
         let typeStr = baseType;
         let dimensions = 0;
@@ -426,12 +426,7 @@ export default class Parser {
             typeStr += '*';
             this._eat('MULTIPLICATIVE_OPERATOR');
         }
-        return {
-            type: baseType,
-            typeStr,
-            arrayType,
-            dimensions,
-        };
+        return NodeFactory.Type(typeStr, arrayType, dimensions);
     }
 
     /**
