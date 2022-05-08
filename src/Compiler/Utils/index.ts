@@ -2,6 +2,7 @@
 
 import { ConstantFP, ConstantInt, PointerType, Type } from "llvm-bindings";
 import ASTNode from "../../Parser/ASTNode";
+import Compiler from "../Compiler";
 
 /**
  * 
@@ -9,7 +10,7 @@ import ASTNode from "../../Parser/ASTNode";
  * @param {Value} value 
  * @returns First key whose value is equal to value.
  */
-function getKeyByValue(this, object, value): string  {
+function getKeyByValue(this: Compiler, object, value): string  {
     return Object.keys(object).find(key => object[key] === value);
 }
 
@@ -18,7 +19,7 @@ function getKeyByValue(this, object, value): string  {
  * @param {String} typeStr 
  * @returns LLVM type
  */
-function convertType(this, typeStr) {
+function convertType(this: Compiler, typeStr) {
     switch (typeStr) {
         case 'int':
             return this.builder.getInt32Ty();
@@ -43,7 +44,7 @@ function convertType(this, typeStr) {
  * @param {Value} value 
  * @returns llvm value from JS value (WIP)
  */
-function convertValue(this, type, value) {
+function convertValue(this: Compiler, type, value) {
     switch (type) {
         case 'int':
             return ConstantInt.get(this.builder.getInt32Ty(), parseInt(value, 10), true);
@@ -65,7 +66,7 @@ function convertValue(this, type, value) {
  * @param {String} gotType 
  * @returns new value of expected type if possible, else null
  */
-function handleNumericTypecasts(this, value, expectedType, gotType) {
+function handleNumericTypecasts(this: Compiler, value, expectedType, gotType, expectedLLVMType) {
     if (expectedType === 'Double' && gotType === 'Float') {
         return this.builder.CreateFPExt(value, this.builder.getDoubleTy(), 'flt_upcast');
     } else if (expectedType === 'Float' && gotType === 'Double') {
@@ -76,6 +77,8 @@ function handleNumericTypecasts(this, value, expectedType, gotType) {
         return this.builder.CreateSIToFP(value, this.builder.getFloatTy(), 'si_to_flt');
     } else if (expectedType === 'Integer' && (gotType === 'Float' || gotType === 'Double')) {
         return this.builder.CreateFPToSI(value, this.builder.getInt64Ty(), 'flt_to_si');
+    } else if (expectedType === 'Integer' && gotType === 'Integer') {
+        return this.builder.CreateTruncOrBitCast(value, expectedLLVMType, 'i_to_i');
     }
     return null;
 }
@@ -87,7 +90,7 @@ function handleNumericTypecasts(this, value, expectedType, gotType) {
  * @returns input value or post-typecast value
  * @throws TypeError if types are different and typecast fails.
  */
-function checkType(this, value, expectedType) {
+function checkType(this: Compiler, value, expectedType) {
     if (!Type.isSameType(value.getType(), expectedType)) {
         let exp = this.getKeyByValue(Type.TypeID, expectedType.getTypeID());
         exp = exp.substring(0, exp.length-4);
@@ -95,7 +98,7 @@ function checkType(this, value, expectedType) {
         let got = this.getKeyByValue(Type.TypeID, value.getType().getTypeID());
         got = got.substring(0, got.length-4)
 
-        const v = this.handleNumericTypecasts(value, exp, got);
+        const v = this.handleNumericTypecasts(value, exp, got, expectedType);
         if (v) return v;
         
         const typeErrorMessage = `Expected type ${
@@ -113,7 +116,7 @@ function checkType(this, value, expectedType) {
  * @param {Value}} val 
  * @returns boolean
  */
-function isFloat(this, val): boolean  {
+function isFloat(this: Compiler, val): boolean  {
     try {
         const test = val.getType().isFloatingPointTy();
         return true;
@@ -127,7 +130,7 @@ function isFloat(this, val): boolean  {
  * @param {Value} val 
  * @returns 
  */
-function isInteger(this, val) {
+function isInteger(this: Compiler, val) {
     return val.getType().isIntegerTy(32);
 }
 
@@ -136,7 +139,7 @@ function isInteger(this, val) {
  * @param {} param 
  * @returns param type as LLVM.Type 
  */
-function resolveArrayParam(this, param) {
+function resolveArrayParam(this: Compiler, param) {
     let resolved = PointerType.get(this.convertType(param.type.baseType), 0);
     for (let i = 1; i < param.type.dimensions; i++) {
         resolved = PointerType.get(resolved, 0);
@@ -149,7 +152,7 @@ function resolveArrayParam(this, param) {
  * @param {returnType} returnType 
  * @returns returnType as Type
  */
-function resolveFuncType(this, returnType: ASTNode) {
+function resolveFuncType(this: Compiler, returnType: ASTNode) {
     if (returnType.arrayType === false) {
         return this.convertType(returnType.baseType);
     } else {
@@ -167,7 +170,7 @@ function resolveFuncType(this, returnType: ASTNode) {
  * @param {String} s 
  * @returns unescaped string
  */
-function unbackslash(this, s) {
+function unbackslash(this: Compiler, s) {
     return s.replace(/\\([\\rnt'"])/g, function(match, p1) {
         const codes = []
         for (const letter of p1) 

@@ -1,24 +1,58 @@
 ; ModuleID = 'test'
 source_filename = "test"
 
+@anon_str = private unnamed_addr constant [5 x i8] c"%d\0A\00\00", align 1
+@anon_str.1 = private unnamed_addr constant [5 x i8] c"%f\0A\00\00", align 1
+@anon_str.2 = private unnamed_addr constant [5 x i8] c"%c\0A\00\00", align 1
+@anon_str.3 = private unnamed_addr constant [18 x i8] c"Max Integer: %i\0A\00\00", align 1
+@anon_str.4 = private unnamed_addr constant [33 x i8] c"Max Integer + 1 (overflow): %i\0A\00\00", align 1
+
 declare i8 @printf(i8*, ...)
+
+define void @printInt(i32 %v) {
+entry:
+  %0 = call i8 (i8*, ...) @printf(i8* getelementptr inbounds ([5 x i8], [5 x i8]* @anon_str, i32 0, i32 0), i32 %v)
+  ret void
+}
+
+define void @printDouble(double %v) {
+entry:
+  %0 = call i8 (i8*, ...) @printf(i8* getelementptr inbounds ([5 x i8], [5 x i8]* @anon_str.1, i32 0, i32 0), double %v)
+  ret void
+}
+
+define void @print(i8* %str) {
+entry:
+  %0 = call i8 (i8*, ...) @printf(i8* %str)
+  ret void
+}
+
+define float @circumference(float %radius) {
+entry:
+  %flt_multmp = fmul float 0x401921FB40000000, %radius
+  ret float %flt_multmp
+}
 
 define i32 @main() {
 entry:
-  %test = alloca i32, i8 0, align 4
-  store i32 15, i32* %test, align 4
-  %0 = alloca [4 x i8], align 1
-  %1 = getelementptr [4 x i8], [4 x i8]* %0, i32 0, i32 0
-  store i8 37, i8* %1, align 1
-  %2 = getelementptr [4 x i8], [4 x i8]* %0, i32 0, i32 1
-  store i8 100, i8* %2, align 1
-  %3 = getelementptr [4 x i8], [4 x i8]* %0, i32 0, i32 2
-  store i8 10, i8* %3, align 1
-  %4 = getelementptr [4 x i8], [4 x i8]* %0, i32 0, i32 3
-  store i8 0, i8* %4, align 1
-  %5 = getelementptr [4 x i8], [4 x i8]* %0, i32 0, i32 0
-  %id_load_tmp = load i32, i32* %test, align 4
-  %6 = call i8 (i8*, ...) @printf(i8* %5, i32 %id_load_tmp)
+  %value = alloca double, i8 0, align 8
+  %0 = call float @circumference(float 5.000000e+00)
+  %flt_upcast = fpext float %0 to double
+  store double %flt_upcast, double* %value, align 8
+  %id_load_tmp = load double, double* %value, align 8
+  call void @printDouble(double %id_load_tmp)
+  %c = alloca i8, i8 0, align 1
+  store i8 99, i8* %c, align 1
+  %id_load_tmp1 = load i8, i8* %c, align 1
+  %1 = call i8 (i8*, ...) @printf(i8* getelementptr inbounds ([5 x i8], [5 x i8]* @anon_str.2, i32 0, i32 0), i8 %id_load_tmp1)
+  %max = alloca i32, i8 0, align 4
+  store i32 2147483647, i32* %max, align 4
+  %id_load_tmp2 = load i32, i32* %max, align 4
+  %2 = call i8 (i8*, ...) @printf(i8* getelementptr inbounds ([18 x i8], [18 x i8]* @anon_str.3, i32 0, i32 0), i32 %id_load_tmp2)
+  %overflow = alloca i32, i8 0, align 4
+  store i32 -2147483648, i32* %overflow, align 4
+  %id_load_tmp3 = load i32, i32* %overflow, align 4
+  %3 = call i8 (i8*, ...) @printf(i8* getelementptr inbounds ([33 x i8], [33 x i8]* @anon_str.4, i32 0, i32 0), i32 %id_load_tmp3)
   ret i32 0
 }
 

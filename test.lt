@@ -1,8 +1,19 @@
 
-extern int printf(char* str);
+#dependency "example/print.lt"
+#define pi 3.1415926
+
+proc float circumference(float radius) {
+    return 2.0 * pi * radius;
+}
 
 proc int main() {
-    let int test = 10 + 5;
-    printf("%d\n", test);
+    let double value = circumference(5.0);
+    printDouble(value);
+    let char c = 99;
+    printf("%c\n", c);
+    let int max = 2147483647;
+    printf("Max Integer: %i\n", max);
+    let int overflow = 2147483648;
+    printf("Max Integer + 1 (overflow): %i\n", overflow);
     return 0;
 }

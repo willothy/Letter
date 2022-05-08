@@ -9,9 +9,7 @@ export default function BinaryExpression(this: Compiler, node: any, symbols: Obj
     
     const typeId = this.getKeyByValue(Type.TypeID, left.getType().getTypeID()).toLowerCase();
     const typeName = typeId.slice(0, typeId.length - 4);
-    //console.log(typeName);
     const typeInterface: LetterType = types[typeName];
-    //console.log(typeInterface);
 
     if (node.operator === '+') {
         return typeInterface.add(left, right, this.builder);

@@ -1,9 +1,10 @@
 import { APInt, ArrayType, ConstantInt } from "llvm-bindings";
 import ASTNode from "../../../Parser/ASTNode";
+import Compiler from "../../Compiler";
 
-export default function StringLiteral(node: ASTNode) {
+export default function StringLiteral(this: Compiler, node: ASTNode) {
     const value = `${this.unbackslash(node.value)}\0`;
-    const baseType = this.builder.getInt8Ty();
+    /*const baseType = this.builder.getInt8Ty();
     const arrayType = ArrayType.get(baseType, value.length);
     const alloc = this.builder.CreateAlloca(arrayType);
     
@@ -30,5 +31,6 @@ export default function StringLiteral(node: ASTNode) {
             this.builder.getInt32(0), 
             this.builder.getInt32(0)
         ]
-    );;
+    );*/
+    return this.builder.CreateGlobalStringPtr(value, 'anon_str', 0, this.module);
 }
