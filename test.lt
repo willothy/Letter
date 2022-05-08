@@ -1,13 +1,13 @@
-#define pi 3.1415926
+
 #dependency "example/print.lt"
 
 
-proc float circumference(float radius) {
-    return 2 * pi * radius;
+proc float circumference(float radius, float pi) {
+    return 2.0 * pi * radius;
 }
 
 proc int main() {
-    let double value = circumference(5.0);
-    printDouble(value);
+    let double value = circumference(5.0, 3.141);
+    printf("%f\n", value);
     return 0;
 }
