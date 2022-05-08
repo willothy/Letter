@@ -7,7 +7,7 @@ proc float circumference(float radius, float pi) {
 }
 
 proc int main() {
-    let double value = circumference(5.0, 3.141);
-    printf("%f\n", value);
+    let double value = circumference(5.0, 3.1415926);
+    printDouble(value);
     return 0;
 }

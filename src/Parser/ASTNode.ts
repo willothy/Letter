@@ -28,6 +28,7 @@ export default class ASTNode {
     typeStr?: string;
     dimensions?: number;
     arrayType?: boolean;
+    baseType?: string;
 
     constructor(
         type: string, { 
@@ -59,6 +60,7 @@ export default class ASTNode {
             typeStr,
             dimensions,
             arrayType,
+            baseType,
         }: { 
             body?: ASTNode,
             expression?: ASTNode,
@@ -88,6 +90,7 @@ export default class ASTNode {
             typeStr?: string,
             dimensions?: number,
             arrayType?: boolean,
+            baseType?: string,
         } = {}
     ) {
         this.type = type;
@@ -119,5 +122,6 @@ export default class ASTNode {
         this.typeStr = typeStr;
         this.dimensions = dimensions;
         this.arrayType = arrayType;
+        this.baseType = baseType;
     }
 }

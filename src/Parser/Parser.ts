@@ -174,20 +174,8 @@ export default class Parser {
      */
     FunctionDeclaration() {
         this._eat('proc');
-        let _type;
-        if (this._lookahead.type === 'void') {
-            _type = {
-                type: 'void',
-                typeStr: 'void',
-                arrayType: false,
-                dimensions: 0,
-            };
-            this._eat('void');
-        } else {
-            _type = this.Type();
-        }
         
-        const type = _type;
+        const type = this.Type();
         const name = this.Identifier();
 
         this._eat('(');
@@ -426,7 +414,7 @@ export default class Parser {
             typeStr += '*';
             this._eat('MULTIPLICATIVE_OPERATOR');
         }
-        return NodeFactory.Type(typeStr, arrayType, dimensions);
+        return NodeFactory.Type(baseType, typeStr, arrayType, dimensions);
     }
 
     /**

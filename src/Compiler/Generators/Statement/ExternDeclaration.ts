@@ -1,6 +1,7 @@
 import { FunctionType } from "llvm-bindings";
+import Compiler from "../../Compiler";
 
-export default function ExternDeclaration(this, node): void  {
+export default function ExternDeclaration(this: Compiler, node): void  {
     const params = [];
     for (const param of node.params) {
         if (param.type.arrayType === false) {

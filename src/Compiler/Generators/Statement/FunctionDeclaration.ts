@@ -6,14 +6,14 @@ export default function FunctionDeclaration(this, node, symbols): void  {
     for (const param of node.params) {
         paramSymbols.push(param.id.name);
         if (param.type.arrayType === false) {
-            params.push(this.convertType(param.type.type));
+            params.push(this.convertType(param.type.baseType));
         } else {
             const r = this.resolveArrayParam(param);
             params.push(r);
         }
     }
     
-    const returnType = node.returnType.type === 'void' ? this.builder.getVoidTy() : this.resolveFuncType(node.returnType);
+    const returnType = node.returnType.baseType === 'void' ? this.builder.getVoidTy() : this.resolveFuncType(node.returnType);
     
     const funcType = FunctionType.get(returnType, params, false);
     const func = Function.Create(
@@ -39,6 +39,6 @@ export default function FunctionDeclaration(this, node, symbols): void  {
         ...symbols, 
         ...locals
     }, func);
-    if (node.returnType.type === 'void')
+    if (node.returnType.baseType === 'void')
         this.builder.CreateRetVoid();
 }

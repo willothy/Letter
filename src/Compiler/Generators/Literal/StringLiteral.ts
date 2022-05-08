@@ -1,6 +1,7 @@
 import { APInt, ArrayType, ConstantInt } from "llvm-bindings";
+import ASTNode from "../../../Parser/ASTNode";
 
-export default function StringLiteral(node: any) {
+export default function StringLiteral(node: ASTNode) {
     const value = `${this.unbackslash(node.value)}\0`;
     const baseType = this.builder.getInt8Ty();
     const arrayType = ArrayType.get(baseType, value.length);

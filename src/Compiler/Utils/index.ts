@@ -1,6 +1,7 @@
 // https://stackoverflow.com/a/28191966/6884167
 
 import { ConstantFP, ConstantInt, PointerType, Type } from "llvm-bindings";
+import ASTNode from "../../Parser/ASTNode";
 
 /**
  * 
@@ -45,7 +46,7 @@ function convertType(this, typeStr) {
 function convertValue(this, type, value) {
     switch (type) {
         case 'int':
-            return ConstantInt.get(this.builder.getInt64Ty(), parseInt(value, 10), true);
+            return ConstantInt.get(this.builder.getInt32Ty(), parseInt(value, 10), true);
         case 'bool':
             return ConstantInt.get(this.builder.getInt1Ty(), value, false);
         case 'float':
@@ -136,7 +137,7 @@ function isInteger(this, val) {
  * @returns param type as LLVM.Type 
  */
 function resolveArrayParam(this, param) {
-    let resolved = PointerType.get(this.convertType(param.type.type), 0);
+    let resolved = PointerType.get(this.convertType(param.type.baseType), 0);
     for (let i = 1; i < param.type.dimensions; i++) {
         resolved = PointerType.get(resolved, 0);
     }
@@ -148,11 +149,11 @@ function resolveArrayParam(this, param) {
  * @param {returnType} returnType 
  * @returns returnType as Type
  */
-function resolveFuncType(this, returnType) {
+function resolveFuncType(this, returnType: ASTNode) {
     if (returnType.arrayType === false) {
-        return this.convertType(returnType.type);
+        return this.convertType(returnType.baseType);
     } else {
-        let resolved = PointerType.get(this.convertType(returnType.type), 0);
+        let resolved = PointerType.get(this.convertType(returnType.baseType), 0);
         for (let i = 1; i < returnType.dimensions; i++) {
             resolved = PointerType.get(resolved, 0);
         }
