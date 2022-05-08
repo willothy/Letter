@@ -416,7 +416,7 @@ export default class Parser {
      */
     Type() {
         // return this._eat('TYPE').value;
-        const baseType = this._eat('TYPE').value;
+        const baseType = this._eat('IDENTIFIER').value;
         let typeStr = baseType;
         let dimensions = 0;
         let arrayType = false;

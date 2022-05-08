@@ -13,6 +13,9 @@ export default class Compiler {
     module: Module;
     builder: IRBuilder;
 
+    // Types
+    
+
     // Utils
     unbackslash = Utils.unbackslash;
     getKeyByValue = Utils.getKeyByValue;
@@ -65,6 +68,7 @@ export default class Compiler {
      * @param fn 
      * @returns 
      */
+    /* types:Object={...BuiltinTypes},*/
     codegen(node, symbols:Object={}, fn:llvm.Function=undefined) {
         switch (node.type) {
             case 'Program':

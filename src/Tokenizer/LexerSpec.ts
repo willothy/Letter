@@ -44,12 +44,12 @@ const Spec = [
     [/^[*\/]/, 'MULTIPLICATIVE_OPERATOR'],
 
     // Primitive Types:
-    [/^\bint\b/, 'TYPE'],
+    /*[/^\bint\b/, 'TYPE'],
     [/^\bfloat\b/, 'TYPE'],
     [/^\bdouble\b/, 'TYPE'],
     [/^\bchar\b/, 'TYPE'],
     [/^\bbool\b/, 'TYPE'],
-    [/^\bstring\b/, 'TYPE'],
+    [/^\bstring\b/, 'TYPE'],*/
 
     // Constant value keywords
     [/^\btrue\b/, 'true'],
