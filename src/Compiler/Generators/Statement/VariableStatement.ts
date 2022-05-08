@@ -1,6 +1,7 @@
 import { ConstantInt } from "llvm-bindings";
+import LetterTypes from "../../Types";
 
-export default function VariableStatement(this, node, symbols, fn): void  {
+export default function VariableStatement(this, node, symbols, types: Object = { ...LetterTypes }, fn): void  {
     for (const declaration of node.declarations) {
         const type = this.convertType(declaration.valType.baseType)
         const alloc = this.builder.CreateAlloca(

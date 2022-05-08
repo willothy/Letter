@@ -1,4 +1,6 @@
-export default function AssignmentExpression(this, node, symbols, fn) {
+import LetterTypes from "../../Types";
+
+export default function AssignmentExpression(this, node, symbols, types: Object = { ...LetterTypes }, fn) {
     const info = symbols[node.left.name];
     this.builder.CreateStore(
         this.checkType(

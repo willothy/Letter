@@ -1,6 +1,7 @@
 import { FunctionType, Function, BasicBlock } from "llvm-bindings";
+import LetterTypes from "../../Types";
 
-export default function FunctionDeclaration(this, node, symbols): void  {
+export default function FunctionDeclaration(this, node, symbols, types: Object = { ...LetterTypes }): void  {
     const params = [];
     const paramSymbols = [];
     for (const param of node.params) {

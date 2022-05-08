@@ -1,4 +1,6 @@
-export default function CallExpression(this, node, symbols, fn) {
+import LetterTypes from "../../Types";
+
+export default function CallExpression(this, node, symbols, types: Object = { ...LetterTypes }, fn) {
     const callArgs = [];
     for (const arg of node.args) {
         callArgs.push(this.codegen(arg, symbols, fn));

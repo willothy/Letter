@@ -7,6 +7,8 @@ import {
 import Generators from './Generators';
 import Utils from './Utils';
 
+import LetterTypes from './Types';
+
 export default class Compiler {
 
     context: LLVMContext;
@@ -14,7 +16,6 @@ export default class Compiler {
     builder: IRBuilder;
 
     // Types
-    
 
     // Utils
     unbackslash = Utils.unbackslash;
@@ -69,37 +70,37 @@ export default class Compiler {
      * @returns 
      */
     /* types:Object={...BuiltinTypes},*/
-    codegen(node, symbols:Object={}, fn:llvm.Function=undefined) {
+    codegen(node, symbols:Object={}, types: Object = { ...LetterTypes }, fn:llvm.Function=undefined) {
         switch (node.type) {
             case 'Program':
-                this.Program(node, symbols, fn);
+                this.Program(node, symbols, types, fn);
                 return;
             case 'BlockStatement':
-                this.BlockStatement(node, symbols, fn);
+                this.BlockStatement(node, symbols, types, fn);
                 return;
             case 'ReturnStatement':
-                this.ReturnStatement(node, symbols, fn);
+                this.ReturnStatement(node, symbols, types, fn);
                 return;
             case 'FunctionDeclaration':
-                this.FunctionDeclaration(node, symbols);
+                this.FunctionDeclaration(node, symbols, types);
                 return;
             case 'ExpressionStatement':
-                this.ExpressionStatement(node, symbols, fn);
+                this.ExpressionStatement(node, symbols, types, fn);
                 return;
             case 'ExternDeclaration':
-                this.ExternDeclaration(node);
+                this.ExternDeclaration(node, types);
                 return;
             case 'VariableStatement':
-                this.VariableStatement(node, symbols, fn);
+                this.VariableStatement(node, symbols, types, fn);
                 return;
             case 'CallExpression':
-                return this.CallExpression(node, symbols, fn);
+                return this.CallExpression(node, symbols, types, fn);
             case 'AssignmentExpression':
-                return this.AssignmentExpression(node, symbols, fn);
+                return this.AssignmentExpression(node, symbols, types, fn);
             case 'BinaryExpression':
-                return this.BinaryExpression(node, symbols, fn);  
+                return this.BinaryExpression(node, symbols, types, fn);  
             case 'Identifier':
-                return this.Identifier(node, symbols); 
+                return this.Identifier(node, symbols, types); 
             case 'NumericLiteral':
                 return this.NumericLiteral(node);
             case 'CharLiteral':
@@ -109,9 +110,5 @@ export default class Compiler {
             default:
                 throw new Error("undefined instruction");
         }
-    }
-
-    
-
-    
+    }    
 }
