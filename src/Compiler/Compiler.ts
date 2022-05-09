@@ -38,6 +38,7 @@ export default class Compiler {
     handleNumericTypecasts = Utils.handleNumericTypecasts;
     convertType = Utils.convertType;
     convertValue = Utils.convertValue;
+    canTypeCast = Utils.canTypeCast;
 
     // Generators
     public Program = Generators.Program;

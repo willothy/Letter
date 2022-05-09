@@ -4,6 +4,31 @@ import { ConstantFP, ConstantInt, PointerType, Type } from "llvm-bindings";
 import ASTNode from "../../Parser/ASTNode";
 import Compiler from "../Compiler";
 
+function canTypeCast(this: Compiler, from: Type, to: Type) {
+    if (Type.isSameType(from, to)) return true;
+
+    let fromType: string = this.getKeyByValue(Type.TypeID, from.getTypeID());
+    fromType = fromType.substring(0, fromType.length-4);
+    
+    let toType: string = this.getKeyByValue(Type.TypeID, to.getTypeID());
+    toType = toType.substring(0, toType.length-4);
+
+    if (toType === 'Double' && fromType === 'Float') {
+        return true;
+    } else if (toType === 'Float' && fromType === 'Double') {
+        return true;
+    } else if (toType === 'Double' && fromType === 'Integer') {
+        return true;
+    } else if (toType === 'Float' && fromType === 'Integer') {
+        return true;
+    } else if (toType === 'Integer' && (fromType === 'Float' || fromType === 'Double')) {
+        return true;
+    } else if (toType === 'Integer' && fromType === 'Integer') {
+        return true;
+    }
+    return false;
+}
+
 /**
  * 
  * @param {Object} object 
@@ -195,7 +220,8 @@ const Utils = {
     checkType,
     handleNumericTypecasts,
     convertType,
-    convertValue
+    convertValue,
+    canTypeCast
 };
 
 export default Utils;

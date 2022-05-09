@@ -8,6 +8,11 @@ proc void printDouble(double v) {
     printf("%f\n", v);
 }
 
+proc void printFloat(float f) {
+    let double val = f;
+    printf("%f\n", val);
+}
+
 proc void print(string str) {
     printf(str);
 }

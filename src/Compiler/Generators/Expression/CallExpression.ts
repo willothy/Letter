@@ -1,5 +1,4 @@
-import { Type, Value } from "llvm-bindings";
-import llvm = require("llvm-bindings");
+import { Type, Value, Function } from "llvm-bindings";
 import ASTNode from "../../../Parser/ASTNode";
 import Compiler from "../../Compiler";
 import LetterFunction from "../../Function/Function";
@@ -33,11 +32,30 @@ export default function CallExpression(this: Compiler, node: ASTNode, symbols, f
     const argTypes: Type[] = [];
     for (const arg of callArgs) argTypes.push(arg.getType());
     
+    const possibles: LetterFunction[] = [];
     for (const fn of fns) {
-        const sameRetType = 
+        let sameRetType = 
             (parent.extraContext && parent.extraContext['varType']) 
             ? Type.isSameType(parent.extraContext['varType'], fn.returnType)
             : true; // Set to true to ignore if the varType context isn't present
+
+        if (hasSameCallArgs(fn, { argTypes }) && sameRetType) {
+            return this.builder.CreateCall(
+                fn.llvm, 
+                callArgs,
+            );
+        } else if (hasSameCallArgs(fn, { argTypes }) && !sameRetType)
+            possibles.push(fn);
+    }
+    // Second pass if no functions match, check if typecasting is possible.
+    // Only loop through functions identified as having same call args in previous pass
+    for (const fn of possibles) {
+        let sameRetType = 
+            (parent.extraContext && parent.extraContext['varType']) 
+            ? Type.isSameType(parent.extraContext['varType'], fn.returnType)
+            : true; // Set to true to ignore if the varType context isn't present
+        if (sameRetType === false)
+            sameRetType = this.canTypeCast(fn.returnType, parent.extraContext['varType']);
         if (hasSameCallArgs(fn, { argTypes }) && sameRetType) {
             return this.builder.CreateCall(
                 fn.llvm, 
