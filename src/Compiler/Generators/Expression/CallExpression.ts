@@ -1,9 +1,25 @@
+import { Type, Value } from "llvm-bindings";
+import llvm = require("llvm-bindings");
 import ASTNode from "../../../Parser/ASTNode";
 import Compiler from "../../Compiler";
-import LetterTypes from "../../Types";
+import LetterFunction from "../../Function/Function";
+import LetterTypes from "../../Types"; 
+
+function hasSameCallArgs(letterFn: LetterFunction, calleeFn: {
+    argTypes: Type[]
+}) {
+    /*if (letterFn.argTypes.length != calleeFn.argTypes.length) 
+        return false;*/
+    
+    for (const [index, t] of Object.entries(letterFn.argTypes)) {
+        if (!Type.isSameType(t, calleeFn.argTypes[index]))
+            return false;
+    }
+    return true;
+}
 
 export default function CallExpression(this: Compiler, node: ASTNode, symbols, fn, parent: ASTNode) {
-    const callArgs = [];
+    const callArgs: Value[] = [];
     let varType;
     if (parent.extraContext && parent.extraContext['varType'])
         varType = parent.extraContext['varType'];
@@ -11,8 +27,18 @@ export default function CallExpression(this: Compiler, node: ASTNode, symbols, f
     for (let i = 0; i < node.args.length; i++) {
         callArgs.push(this.codegen(node.args[i], symbols, fn, node.withContext({ argPos: i, varType: varType ?? null })));
     }
-    return this.builder.CreateCall(
-        this.module.getFunction(node.callee.name), 
-        callArgs
-    );
+    //console.log(node.callee.name)
+    const fns = this.functions[node.callee.name];
+   // console.log(fns);
+    const argTypes: Type[] = [];
+    for (const arg of callArgs) argTypes.push(arg.getType());
+    for (const fn of fns) {
+        if (hasSameCallArgs(fn, { argTypes })) {
+            return this.builder.CreateCall(
+                fn.llvm, 
+                callArgs,
+            );
+        }
+    }
+    throw new Error(`No function ${node.callee.name} defined for the provided arg types`);
 }

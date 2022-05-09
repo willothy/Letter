@@ -8,12 +8,12 @@ export default function NumericLiteral(this: Compiler, node: ASTNode, fn: llvm.F
         return node.valType === 'INTEGER' ? 
             this.checkType(ConstantInt.get(this.builder.getInt32Ty(), node.value, true), fn.getReturnType())
             : this.checkType(ConstantFP.get(this.builder.getDoubleTy(), node.value), fn.getReturnType());       
-    } else if (parent.type === 'CallExpression') {
+    } /*else if (parent.type === 'CallExpression') {
         const parentFunction = this.module.getFunction(parent.callee.name);
         return node.valType === 'INTEGER' ? 
             this.checkType(ConstantInt.get(this.builder.getInt32Ty(), node.value, true), parentFunction.getArg(parent.extraContext['argPos']).getType())
             : this.checkType(ConstantFP.get(this.builder.getDoubleTy(), node.value), parentFunction.getArg(parent.extraContext['argPos']).getType());     
-    } else if (parent.extraContext && parent.extraContext['varType']) {
+    }*/ else if (parent.extraContext && parent.extraContext['varType']) {
         return node.valType === 'INTEGER' ? 
             this.checkType(ConstantInt.get(this.builder.getInt32Ty(), node.value, true), parent.extraContext['varType'])
             : this.checkType(ConstantFP.get(this.builder.getDoubleTy(), node.value), parent.extraContext['varType']);

@@ -14,6 +14,7 @@ import Generators from './Generators';
 import Utils from './Utils';
 
 import LetterTypes from './Types';
+import LetterFunction from './Function/Function';
 import ASTNode from "../Parser/ASTNode";
 
 
@@ -24,6 +25,7 @@ export default class Compiler {
     builder: IRBuilder;
 
     types: Object = LetterTypes;
+    functions: Object = {};
 
     // Utils
     unbackslash = Utils.unbackslash;
