@@ -28,12 +28,17 @@ export default function CallExpression(this: Compiler, node: ASTNode, symbols, f
         callArgs.push(this.codegen(node.args[i], symbols, fn, node.withContext({ argPos: i, varType: varType ?? null })));
     }
     //console.log(node.callee.name)
-    const fns = this.functions[node.callee.name];
+    const fns: LetterFunction[] = this.functions[node.callee.name];
    // console.log(fns);
     const argTypes: Type[] = [];
     for (const arg of callArgs) argTypes.push(arg.getType());
+    
     for (const fn of fns) {
-        if (hasSameCallArgs(fn, { argTypes })) {
+        const sameRetType = 
+            (parent.extraContext && parent.extraContext['varType']) 
+            ? Type.isSameType(parent.extraContext['varType'], fn.returnType)
+            : true; // Set to true to ignore if the varType context isn't present
+        if (hasSameCallArgs(fn, { argTypes }) && sameRetType) {
             return this.builder.CreateCall(
                 fn.llvm, 
                 callArgs,

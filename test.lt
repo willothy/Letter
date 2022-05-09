@@ -3,7 +3,11 @@
 
 proc double circumference(double radius) {
     return 2 * pi * radius;
-} 
+}
+
+proc double circumference(float radius) {
+    return 2 * pi * radius;
+}
 
 proc float circumference(float radius) {
     return 2 * pi * radius;
@@ -16,8 +20,11 @@ proc void printf(double f) {
 proc int main() {
     let float value = circumference(10.0);
     let double v = value;
-    let double d = circumference(10.0);
-    printf(v);
+    let double d = circumference(15.0);
+    let float f = 20.0;
+    let double fc = circumference(f);
+    printDouble(v);
     printDouble(d);
+    printDouble(fc);
     return 0;
 }
