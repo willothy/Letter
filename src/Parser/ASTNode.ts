@@ -12,7 +12,7 @@ export default class ASTNode {
     valType?: any;
     init?: ASTNode;
     argument?: ASTNode;
-    args?: any;
+    args?: [];
     name?: any;
     test?: ASTNode;
     consequent?: ASTNode;
@@ -29,6 +29,47 @@ export default class ASTNode {
     dimensions?: number;
     arrayType?: boolean;
     baseType?: string;
+
+    extraContext?: Object;
+
+    withContext(context: Object = {}) {
+        return new ASTNode(
+            this.type, {
+                body: this.body,
+                expression: this.expression,
+                statement: this.statement,
+                value: this.value,
+                left: this.left,
+                right: this.right,
+                operator: this.operator,
+                declarations: this.declarations, 
+                id: this.id,
+                init: this.init,
+                argument: this.argument,
+                args: this.args,
+                name: this.name,
+                test: this.test,
+                consequent: this.consequent,
+                alternate: this.alternate,
+                update: this.update,
+                returnType: this.returnType,
+                params: this.params,
+                computed: this.computed,
+                object: this.object,
+                property: this.property,
+                callee: this.callee,
+                superClass: this.superClass,
+                typeStr: this.typeStr,
+                dimensions: this.dimensions,
+                arrayType: this.arrayType,
+                baseType: this.baseType,
+                extraContext: {
+                    ...this.extraContext,
+                    ...context
+                }
+            }
+        )
+    }
 
     constructor(
         type: string, { 
@@ -61,6 +102,7 @@ export default class ASTNode {
             dimensions,
             arrayType,
             baseType,
+            extraContext
         }: { 
             body?: any,
             expression?: ASTNode,
@@ -91,6 +133,7 @@ export default class ASTNode {
             dimensions?: number,
             arrayType?: boolean,
             baseType?: string,
+            extraContext?: Object
         } = {}
     ) {
         this.type = type;
@@ -123,5 +166,6 @@ export default class ASTNode {
         this.dimensions = dimensions;
         this.arrayType = arrayType;
         this.baseType = baseType;
+        this.extraContext = extraContext;
     }
 }

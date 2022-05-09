@@ -1,22 +1,19 @@
-
 #dependency "example/print.lt"
 #define pi 3.1415926
 
-proc float circumference(float radius) {
-    return 2.0 * pi * radius;
+proc double circumferenced(double radius) {
+    return 2 * pi * radius;
+} 
+
+proc float circumferencef(float radius) {
+    return 2 * pi * radius;
 }
 
 proc int main() {
-    let double value = 21474836473453453452397.9675656345345;
-    printDouble(value);
-    let float bigfloat = 21474836473453453452397.9675656345345;
-    let double b = bigfloat;
-    printf("BigFloat: %f\n", b);
-    let char c = 99;
-    printf("%c\n", c);
-    let int max = 2147483647;
-    printf("Max Integer: %i\n", max);
-    let int overflow = 2147483648;
-    printf("Max Integer + 1 (overflow): %i\n", overflow);
+    let float value = circumferencef(10.0);
+    let double v = value;
+    let double d = circumferenced(10.0);
+    printDouble(v);
+    printDouble(d);
     return 0;
 }

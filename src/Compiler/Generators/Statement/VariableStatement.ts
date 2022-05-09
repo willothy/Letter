@@ -21,7 +21,7 @@ export default function VariableStatement(this: Compiler, node: ASTNode, symbols
             }
             this.builder.CreateStore(
                 this.checkType(
-                    this.codegen(declaration.init, symbols, fn, node),
+                    this.codegen(declaration.init, symbols, fn, node.withContext({ varType: type })),
                     type
                 ),
                 alloc
