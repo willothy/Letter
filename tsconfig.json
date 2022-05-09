@@ -3,9 +3,11 @@
         "outDir": "./build",
         "allowJs": true,
         "target": "ES6",
-        "moduleResolution": "node"
+        "moduleResolution": "node",
+        "module":"none"
     },
     "include": [
-        "./src/**/*"
+        "./src/**/*",
+        "./letter.ts"
     ],
 }

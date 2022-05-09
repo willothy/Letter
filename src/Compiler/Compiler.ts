@@ -1,13 +1,27 @@
 import { 
     LLVMContext, 
     Module, 
-    IRBuilder 
+    IRBuilder, 
+    InitializeNativeTarget,
+    InitializeNativeTargetDisassembler,
+    InitializeNativeTargetAsmPrinter,
+    InitializeAllTargetInfos,
+    InitializeAllTargetMCs,
+    TargetMachine
 } from "llvm-bindings"
 
 import Generators from './Generators';
 import Utils from './Utils';
 
 import LetterTypes from './Types';
+import LetterInt from "./Types/Int";
+import LetterFloat from "./Types/Float";
+import LetterDouble from "./Types/Double";
+import LetterChar from "./Types/Char";
+import LetterString from "./Types/String";
+import ASTNode from "../Parser/ASTNode";
+import llvm = require("llvm-bindings");
+import { isLabeledStatement } from "typescript";
 
 export default class Compiler {
 
@@ -30,8 +44,8 @@ export default class Compiler {
     convertValue = Utils.convertValue;
 
     // Generators
-    private Program = Generators.Program;
-    private BlockStatement = Generators.BlockStatement;
+    public Program = Generators.Program;
+    public BlockStatement = Generators.BlockStatement;
     private ReturnStatement = Generators.ReturnStatement;
     private FunctionDeclaration = Generators.FunctionDeclaration;
     private ExpressionStatement = Generators.ExpressionStatement;
@@ -57,7 +71,20 @@ export default class Compiler {
      * @returns LLVM IR as text
      */
     compile(ast) {
-        this.codegen(ast);
+        InitializeNativeTarget();
+        InitializeNativeTargetAsmPrinter();
+        InitializeNativeTargetDisassembler();
+
+        InitializeAllTargetInfos();
+        InitializeAllTargetMCs();
+
+        this.codegen(ast, {}, {
+            integer: LetterInt,
+            float: LetterFloat,
+            double: LetterDouble,
+            char: LetterChar,
+            string: LetterString
+        }, undefined, ast);
         
         return this.module.print();
     }
@@ -70,43 +97,43 @@ export default class Compiler {
      * @returns 
      */
     /* types:Object={...BuiltinTypes},*/
-    codegen(node, symbols:Object={}, types: Object = { ...LetterTypes }, fn:llvm.Function=undefined) {
+    codegen(node: ASTNode, symbols:Object={}, types: Object, fn:llvm.Function=undefined, parent: ASTNode) {
         switch (node.type) {
             case 'Program':
-                this.Program(node, symbols, types, fn);
+                this.Program(node, symbols, types, fn, parent);
                 return;
             case 'BlockStatement':
-                this.BlockStatement(node, symbols, types, fn);
+                this.BlockStatement(node, symbols, types, fn, parent);
                 return;
             case 'ReturnStatement':
-                this.ReturnStatement(node, symbols, types, fn);
+                this.ReturnStatement(node, symbols, types, fn, parent);
                 return;
             case 'FunctionDeclaration':
-                this.FunctionDeclaration(node, symbols, types);
+                this.FunctionDeclaration(node, symbols, types, parent);
                 return;
             case 'ExpressionStatement':
-                this.ExpressionStatement(node, symbols, types, fn);
+                this.ExpressionStatement(node, symbols, types, fn, parent);
                 return;
             case 'ExternDeclaration':
-                this.ExternDeclaration(node, types);
+                this.ExternDeclaration(node, types, parent);
                 return;
             case 'VariableStatement':
-                this.VariableStatement(node, symbols, types, fn);
+                this.VariableStatement(node, symbols, types, fn, parent);
                 return;
             case 'CallExpression':
-                return this.CallExpression(node, symbols, types, fn);
+                return this.CallExpression(node, symbols, types, fn, parent);
             case 'AssignmentExpression':
-                return this.AssignmentExpression(node, symbols, types, fn);
+                return this.AssignmentExpression(node, symbols, types, fn, parent);
             case 'BinaryExpression':
-                return this.BinaryExpression(node, symbols, types, fn);  
+                return this.BinaryExpression(node, symbols, types, fn, parent);  
             case 'Identifier':
-                return this.Identifier(node, symbols, types); 
+                return this.Identifier(node, symbols, types, fn, parent); 
             case 'NumericLiteral':
-                return this.NumericLiteral(node);
+                return this.NumericLiteral(node, fn, parent);
             case 'CharLiteral':
-                return this.CharLiteral(node);
+                return this.CharLiteral(node, fn, parent);
             case 'StringLiteral':
-                return this.StringLiteral(node);             
+                return this.StringLiteral(node, fn, parent);             
             default:
                 throw new Error("undefined instruction");
         }

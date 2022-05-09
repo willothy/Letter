@@ -1,8 +1,9 @@
 import { APInt, ArrayType, ConstantInt } from "llvm-bindings";
+import llvm = require("llvm-bindings");
 import ASTNode from "../../../Parser/ASTNode";
 import Compiler from "../../Compiler";
 
-export default function StringLiteral(this: Compiler, node: ASTNode) {
+export default function StringLiteral(this: Compiler, node: ASTNode, fn: llvm.Function, parent: ASTNode) {
     const value = `${this.unbackslash(node.value)}\0`;
     /*const baseType = this.builder.getInt8Ty();
     const arrayType = ArrayType.get(baseType, value.length);

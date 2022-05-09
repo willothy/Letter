@@ -1,7 +1,9 @@
 import { FunctionType, Function, BasicBlock } from "llvm-bindings";
+import ASTNode from "../../../Parser/ASTNode";
+import Compiler from "../../Compiler";
 import LetterTypes from "../../Types";
 
-export default function FunctionDeclaration(this, node, symbols, types: Object = { ...LetterTypes }): void  {
+export default function FunctionDeclaration(this: Compiler, node, symbols, types: Object, parent: ASTNode): void  {
     const params = [];
     const paramSymbols = [];
     for (const param of node.params) {
@@ -39,7 +41,7 @@ export default function FunctionDeclaration(this, node, symbols, types: Object =
     this.codegen(node.body, {
         ...symbols, 
         ...locals
-    }, func);
+    }, types, func, parent);
     if (node.returnType.baseType === 'void')
         this.builder.CreateRetVoid();
 }

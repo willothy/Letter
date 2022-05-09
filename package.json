@@ -2,10 +2,11 @@
   "name": "letter",
   "version": "0.1.0",
   "description": "",
-  "main": "letter-rdp",
+  "main": "./letter.ts",
   "scripts": {
     "test": "node ./__tests__/run.js",
     "template": "cp ./__tests__/template.js ./__tests__/$npm_config_name",
+    "build": "npx tsc",
     "compile": "./letterc.sh",
     "object": "./letterb.sh"
   },

@@ -70,7 +70,7 @@ function handleNumericTypecasts(this: Compiler, value, expectedType, gotType, ex
     if (expectedType === 'Double' && gotType === 'Float') {
         return this.builder.CreateFPExt(value, this.builder.getDoubleTy(), 'flt_upcast');
     } else if (expectedType === 'Float' && gotType === 'Double') {
-        return this.builder.CreateFPTrunc(value, this.builder.getDoubleTy(), 'dbl_downcast');
+        return this.builder.CreateFPTrunc(value, this.builder.getFloatTy(), 'dbl_downcast');
     } else if (expectedType === 'Double' && gotType === 'Integer') {
         return this.builder.CreateSIToFP(value, this.builder.getDoubleTy(), 'si_to_dbl');
     } else if (expectedType === 'Float' && gotType === 'Integer') {

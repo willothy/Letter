@@ -6,6 +6,8 @@ import Compiler from './src/Compiler/Compiler';
 import { readFileSync } from "fs";
 import { dirname, resolve, basename } from 'path';
 
+import * as llvm from 'llvm-bindings';
+
 Error.stackTraceLimit = 5; // Don't print full js stack trace when --stack isn't enabled
 
 function main(argv) {

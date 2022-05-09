@@ -1,9 +1,9 @@
 export default class ASTNode {
     type: string;
-    body?: ASTNode;
+    body?: any;
     expression?: ASTNode;
     statement?: ASTNode;
-    value?: ASTNode;
+    value?: any;
     left?: ASTNode;
     right?: ASTNode;
     operator?: string;
@@ -13,7 +13,7 @@ export default class ASTNode {
     init?: ASTNode;
     argument?: ASTNode;
     args?: any;
-    name?: string;
+    name?: any;
     test?: ASTNode;
     consequent?: ASTNode;
     alternate?: ASTNode;
@@ -62,7 +62,7 @@ export default class ASTNode {
             arrayType,
             baseType,
         }: { 
-            body?: ASTNode,
+            body?: any,
             expression?: ASTNode,
             statement?: ASTNode,
             value?: ASTNode,
