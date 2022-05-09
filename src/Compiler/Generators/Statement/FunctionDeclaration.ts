@@ -3,7 +3,7 @@ import ASTNode from "../../../Parser/ASTNode";
 import Compiler from "../../Compiler";
 import LetterTypes from "../../Types";
 
-export default function FunctionDeclaration(this: Compiler, node, symbols, types: Object, parent: ASTNode): void  {
+export default function FunctionDeclaration(this: Compiler, node, symbols, parent: ASTNode): void  {
     const params = [];
     const paramSymbols = [];
     for (const param of node.params) {
@@ -41,7 +41,7 @@ export default function FunctionDeclaration(this: Compiler, node, symbols, types
     this.codegen(node.body, {
         ...symbols, 
         ...locals
-    }, types, func, parent);
+    }, func, parent);
     if (node.returnType.baseType === 'void')
         this.builder.CreateRetVoid();
 }

@@ -3,7 +3,7 @@ import ASTNode from "../../../Parser/ASTNode";
 import Compiler from "../../Compiler";
 import LetterTypes from "../../Types";
 
-export default function ExternDeclaration(this: Compiler, node: ASTNode, types: Object, parent: ASTNode): void  {
+export default function ExternDeclaration(this: Compiler, node: ASTNode, parent: ASTNode): void  {
     const params = [];
     for (const param of node.params) {
         if (param.type.arrayType === false) {

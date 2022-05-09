@@ -14,14 +14,8 @@ import Generators from './Generators';
 import Utils from './Utils';
 
 import LetterTypes from './Types';
-import LetterInt from "./Types/Int";
-import LetterFloat from "./Types/Float";
-import LetterDouble from "./Types/Double";
-import LetterChar from "./Types/Char";
-import LetterString from "./Types/String";
 import ASTNode from "../Parser/ASTNode";
-import llvm = require("llvm-bindings");
-import { isLabeledStatement } from "typescript";
+
 
 export default class Compiler {
 
@@ -29,7 +23,7 @@ export default class Compiler {
     module: Module;
     builder: IRBuilder;
 
-    // Types
+    types: Object = LetterTypes;
 
     // Utils
     unbackslash = Utils.unbackslash;
@@ -78,13 +72,7 @@ export default class Compiler {
         InitializeAllTargetInfos();
         InitializeAllTargetMCs();
 
-        this.codegen(ast, {}, {
-            integer: LetterInt,
-            float: LetterFloat,
-            double: LetterDouble,
-            char: LetterChar,
-            string: LetterString
-        }, undefined, ast);
+        this.codegen(ast, {}, undefined, ast);
         
         return this.module.print();
     }
@@ -97,37 +85,37 @@ export default class Compiler {
      * @returns 
      */
     /* types:Object={...BuiltinTypes},*/
-    codegen(node: ASTNode, symbols:Object={}, types: Object, fn:llvm.Function=undefined, parent: ASTNode) {
+    codegen(node: ASTNode, symbols:Object={}, fn:llvm.Function=undefined, parent: ASTNode) {
         switch (node.type) {
             case 'Program':
-                this.Program(node, symbols, types, fn, parent);
+                this.Program(node, symbols, fn, parent);
                 return;
             case 'BlockStatement':
-                this.BlockStatement(node, symbols, types, fn, parent);
+                this.BlockStatement(node, symbols, fn, parent);
                 return;
             case 'ReturnStatement':
-                this.ReturnStatement(node, symbols, types, fn, parent);
+                this.ReturnStatement(node, symbols, fn, parent);
                 return;
             case 'FunctionDeclaration':
-                this.FunctionDeclaration(node, symbols, types, parent);
+                this.FunctionDeclaration(node, symbols, parent);
                 return;
             case 'ExpressionStatement':
-                this.ExpressionStatement(node, symbols, types, fn, parent);
+                this.ExpressionStatement(node, symbols, fn, parent);
                 return;
             case 'ExternDeclaration':
-                this.ExternDeclaration(node, types, parent);
+                this.ExternDeclaration(node, parent);
                 return;
             case 'VariableStatement':
-                this.VariableStatement(node, symbols, types, fn, parent);
+                this.VariableStatement(node, symbols, fn, parent);
                 return;
             case 'CallExpression':
-                return this.CallExpression(node, symbols, types, fn, parent);
+                return this.CallExpression(node, symbols, fn, parent);
             case 'AssignmentExpression':
-                return this.AssignmentExpression(node, symbols, types, fn, parent);
+                return this.AssignmentExpression(node, symbols, fn, parent);
             case 'BinaryExpression':
-                return this.BinaryExpression(node, symbols, types, fn, parent);  
+                return this.BinaryExpression(node, symbols, fn, parent);  
             case 'Identifier':
-                return this.Identifier(node, symbols, types, fn, parent); 
+                return this.Identifier(node, symbols, fn, parent); 
             case 'NumericLiteral':
                 return this.NumericLiteral(node, fn, parent);
             case 'CharLiteral':
