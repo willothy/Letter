@@ -4,25 +4,6 @@ import Compiler from "../../Compiler";
 import LetterFunction from "../../Function/Function";
 import LetterTypes from "../../Types";
 
-//https://www.geeksforgeeks.org/how-to-create-hash-from-string-in-javascript/
-function hash(string) {            
-    let hash = 0;
-      
-    if (string.length == 0) return hash;
-      
-    for (let i = 0; i < string.length; i++) {
-        const char = string.charCodeAt(i);
-        hash = ((hash << 5) - hash) + char;
-        hash = hash & hash;
-    }
-
-    const hashCodeChars = String(hash).split('');
-    const hashCodeInts: number[] = [];
-    hashCodeChars.forEach((value) => hashCodeInts.push(value.charCodeAt(0)));
-
-    return String.fromCharCode(...hashCodeInts);
-}
-
 export default function ExternDeclaration(this: Compiler, node: ASTNode, parent: ASTNode): void  {
     const params = [];
     for (const param of node.params) {
