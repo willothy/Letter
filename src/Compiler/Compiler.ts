@@ -16,6 +16,7 @@ import Utils from './Utils';
 import LetterTypes from './Types';
 import LetterFunction from './Function/Function';
 import { ASTNode } from "../Parser/ASTNodes/ASTNode";
+import llvm = require("llvm-bindings");
 
 
 export default class Compiler {
