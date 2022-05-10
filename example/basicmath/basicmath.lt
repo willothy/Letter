@@ -3,7 +3,7 @@
 
 proc int main() {
     let int radius = 5;
-    let float circumference = 2.0 * pi * radius;
+    let float circumference = 2 * pi * radius;
     let double c = circumference;
     printDouble(c);
     return 0;
