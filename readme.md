@@ -16,12 +16,12 @@ Features that are working now:
 - Preprocessor (import, define)
 - Math operations
 - Extern functions
-- Function definitions (including void)
+- Function definitions
+    - Void type
+    - Overloading
 - Implicit typecasting of numbers
-- Printing values using the print.lt library (printf wrapper)
-- Strings, Floats, Doubles, and Integers 
-
-Here's an example of a working program in Letter: <br>
+- Printing values using print.lt (printf wrapper)
+- Strings, Floats, Doubles, Booleans, Integers 
 
 <br>
 Use:<br>
