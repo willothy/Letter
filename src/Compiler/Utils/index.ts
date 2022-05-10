@@ -1,7 +1,7 @@
 // https://stackoverflow.com/a/28191966/6884167
 
 import { ConstantFP, ConstantInt, PointerType, Type } from "llvm-bindings";
-import ASTNode from "../../Parser/ASTNode";
+import { ASTNode } from "../../Parser/ASTNodes/ASTNode";
 import Compiler from "../Compiler";
 
 function canTypeCast(this: Compiler, from: Type, to: Type) {

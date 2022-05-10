@@ -8,9 +8,9 @@ proc void printDouble(double v) {
     printf("%f\n", v);
 }
 
-proc void printFloat(float f) {
+proc double printFloat(float f) {
     let double val = f;
-    printf("%f\n", val);
+    return val;
 }
 
 proc void print(string str) {

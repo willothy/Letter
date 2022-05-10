@@ -9,15 +9,17 @@ proc double circumference(float radius) {
     return 2 * pi * radius;
 }
 
-proc float circumference(float radius) return 2 * pi * radius;
-
+proc float circumference(float radius) {
+    return 2 * pi * radius;
+}
 
 proc int main() {
-    let float f = circumference(10.0);
-    let double d = circumference(10.0);
-    let double q = circumference(f);
-
-    printFloat(f);
-
+    if (1 == 0) {
+        printf("yay!");
+    } else if (1 == 2) {
+        printf("yay 2!");
+    } else {
+        printf("no!");
+    }
     return 0;
 }

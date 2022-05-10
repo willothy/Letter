@@ -16,6 +16,8 @@ import NumericLiteral from './Literal/NumericLiteral';
 import CharLiteral from './Literal/CharLiteral';
 import StringLiteral from './Literal/StringLiteral';
 
+import LogicalExpression from './Expression/LogicalExpression';
+import IfStatement from './ControlFlow/IfStatement';
 
 const Generators = {
     Program,
@@ -31,7 +33,9 @@ const Generators = {
     Identifier,
     NumericLiteral,
     CharLiteral,
-    StringLiteral
+    StringLiteral,
+    LogicalExpression,
+    IfStatement
 }
 
 export default Generators;

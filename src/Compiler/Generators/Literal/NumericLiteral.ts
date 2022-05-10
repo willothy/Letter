@@ -1,6 +1,6 @@
 import { ConstantFP, ConstantInt } from "llvm-bindings";
 import llvm = require("llvm-bindings");
-import ASTNode from "../../../Parser/ASTNode";
+import { ASTNode } from "../../../Parser/ASTNodes/ASTNode";
 import Compiler from "../../Compiler";
 
 export default function NumericLiteral(this: Compiler, node: ASTNode, fn: llvm.Function, parent: ASTNode) {

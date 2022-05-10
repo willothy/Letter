@@ -21,11 +21,16 @@ function div (left, right, builder: IRBuilder) {
     return builder.CreateSDiv(left, right, 'int_divtmp');
 }
 
+function equal (left, right, builder: IRBuilder) {
+    return builder.CreateICmpEQ(left, right, 'int_cmp_eq');
+}
+
 const LetterInt = new LetterType('int', create, {
     add,
     sub,
     mul,
-    div
+    div,
+    equal,
 });
 
 export default LetterInt;

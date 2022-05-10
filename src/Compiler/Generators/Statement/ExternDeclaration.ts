@@ -1,5 +1,5 @@
 import { FunctionType, Function, ConstantExpr, ConstantPointerNull, Constant } from "llvm-bindings";
-import ASTNode from "../../../Parser/ASTNode";
+import { ASTNode } from "../../../Parser/ASTNodes/ASTNode";
 import Compiler from "../../Compiler";
 import LetterFunction from "../../Function/Function";
 import LetterTypes from "../../Types";

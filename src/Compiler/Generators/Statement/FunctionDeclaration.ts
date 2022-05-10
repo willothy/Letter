@@ -1,5 +1,5 @@
 import { FunctionType, Function, BasicBlock } from "llvm-bindings";
-import ASTNode from "../../../Parser/ASTNode";
+import { ASTNode } from "../../../Parser/ASTNodes/ASTNode";
 import Compiler from "../../Compiler";
 import LetterFunction from "../../Function/Function";
 import LetterTypes from "../../Types";
@@ -32,6 +32,12 @@ export default function FunctionDeclaration(this: Compiler, node, symbols, paren
         fnName,
         this.module
     );
+
+    if(this.functions[node.name.name].length > 0)
+        this.functions[node.name.name].push(new LetterFunction(node.name.name, fnName, returnType, params, func, funcType));
+    else
+        this.functions[node.name.name] = [new LetterFunction(node.name.name, fnName, returnType, params, func, funcType)];
+
     const locals = {};
     for (const [index, symbol] of paramSymbols.entries()) {
         const arg = func.getArg(index);
@@ -51,9 +57,4 @@ export default function FunctionDeclaration(this: Compiler, node, symbols, paren
     }, func, parent);
     if (node.returnType.baseType === 'void')
         this.builder.CreateRetVoid();
-    
-    if(this.functions[node.name.name].length > 0)
-        this.functions[node.name.name].push(new LetterFunction(node.name.name, fnName, returnType, params, func, funcType));
-    else
-        this.functions[node.name.name] = [new LetterFunction(node.name.name, fnName, returnType, params, func, funcType)];
 }

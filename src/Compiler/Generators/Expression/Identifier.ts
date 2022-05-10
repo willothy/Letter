@@ -1,5 +1,5 @@
 import llvm = require("llvm-bindings");
-import ASTNode from "../../../Parser/ASTNode";
+import { ASTNode } from "../../../Parser/ASTNodes/ASTNode";
 import LetterTypes from "../../Types";
 
 export default function Identifier(this, node: any, symbols: Object, fn: llvm.Function, parent: ASTNode) {

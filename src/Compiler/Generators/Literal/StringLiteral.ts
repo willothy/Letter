@@ -1,6 +1,6 @@
 import { APInt, ArrayType, ConstantInt } from "llvm-bindings";
 import llvm = require("llvm-bindings");
-import ASTNode from "../../../Parser/ASTNode";
+import { ASTNode } from "../../../Parser/ASTNodes/ASTNode";
 import Compiler from "../../Compiler";
 
 export default function StringLiteral(this: Compiler, node: ASTNode, fn: llvm.Function, parent: ASTNode) {

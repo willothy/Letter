@@ -1,5 +1,39 @@
 
-import ASTNode from './ASTNode';
+//import ASTNode from './ASTNode';
+import {
+    AssignmentExpressionNode,
+    ASTNode,
+    BinaryExpressionNode,
+    BlockStatementNode,
+    BooleanLiteralNode,
+    CallExpressionNode,
+    CharLiteralNode,
+    ClassDeclarationNode,
+    DoWhileStatementNode,
+    EmptyStatementNode,
+    ExpressionStatementNode,
+    ExternDeclarationNode,
+    ForStatementNode,
+    FunctionDeclarationNode,
+    IdentifierNode,
+    IfStatementNode,
+    LogicalExpressionNode,
+    MemberExpressionNode,
+    NewExpressionNode,
+    NullLiteralNode,
+    NumericLiteralNode,
+    ProgramNode, 
+    ReturnStatementNode, 
+    StringLiteralNode, 
+    SuperNode, 
+    ThisExpressionNode, 
+    TypeNode,
+    UnaryExpressionNode,
+    VariableDeclarationNode,
+    VariableStatementNode,
+    WhileStatementNode
+} from './ASTNodes/ASTNode';
+
 
 export default class NodeFactory {
     /**
@@ -7,8 +41,8 @@ export default class NodeFactory {
      * @param body
      * @returns 
      */
-    static Program(body: ASTNode): ASTNode {
-        return new ASTNode('Program', { body });
+    static Program(body: ASTNode[]): ASTNode {
+        return new ProgramNode(body);
     }
 
     /**
@@ -16,7 +50,7 @@ export default class NodeFactory {
      * @returns 
      */
     static EmptyStatement(): ASTNode {
-        return new ASTNode('EmptyStatement');
+        return new EmptyStatementNode();
     }
 
     /**
@@ -24,8 +58,8 @@ export default class NodeFactory {
      * @param body 
      * @returns 
      */
-    static BlockStatement(body: ASTNode): ASTNode {
-        return new ASTNode('BlockStatement', { body });
+    static BlockStatement(body: ASTNode[]): ASTNode {
+        return new BlockStatementNode(body);
     }
 
     /**
@@ -34,16 +68,16 @@ export default class NodeFactory {
      * @returns 
      */
     static ExpressionStatement(expression: ASTNode): ASTNode {
-        return new ASTNode('ExpressionStatement', { expression });
+        return new ExpressionStatementNode(expression);
     }
 
     static Type(baseType: string, typeStr: string, arrayType: boolean, dimensions: number) {
-        return new ASTNode('Type', {
+        return new TypeNode(
             baseType,
             typeStr,
-            dimensions,
-            arrayType
-        });
+            arrayType,
+            dimensions
+        );
     }
     
     /**
@@ -52,7 +86,7 @@ export default class NodeFactory {
      * @returns 
      */
     static StringLiteral(value): ASTNode {
-        return new ASTNode('StringLiteral', { value });
+        return new StringLiteralNode(value);
     }
     
     /**
@@ -61,7 +95,7 @@ export default class NodeFactory {
      * @returns 
      */
     static CharLiteral(value): ASTNode {
-        return new ASTNode('CharLiteral', { value });
+        return new CharLiteralNode(value);
     }
 
     /**
@@ -70,7 +104,7 @@ export default class NodeFactory {
      * @returns 
      */
     static NumericLiteral(type, value): ASTNode {
-        return new ASTNode('NumericLiteral', { valType: type, value });
+        return new NumericLiteralNode(type, value);
     }
 
     /**
@@ -81,12 +115,10 @@ export default class NodeFactory {
      * @returns 
      */
     static BinaryExpression(operator: string, left: ASTNode, right: ASTNode): ASTNode {
-        return new ASTNode(
-            'BinaryExpression', {
-                operator,
-                left,
-                right,
-            }
+        return new BinaryExpressionNode(
+            operator,
+            left,
+            right,    
         );
     }
 
@@ -98,12 +130,10 @@ export default class NodeFactory {
      * @returns 
      */
     static AssignmentExpression(operator, left, right): ASTNode {
-        return new ASTNode(
-            'AssignmentExpression', {
-                operator,
-                left,
-                right,
-            }
+        return new AssignmentExpressionNode(
+            operator,
+            left,
+            right,
         );
     }
 
@@ -113,7 +143,7 @@ export default class NodeFactory {
      * @returns 
      */
     static VariableStatement(declarations: ASTNode[]): ASTNode {
-        return new ASTNode('VariableStatement', { declarations });
+        return new VariableStatementNode(declarations);
     }
 
     /**
@@ -124,13 +154,7 @@ export default class NodeFactory {
      * @returns 
      */
     static VariableDeclaration(id, type, init): ASTNode {
-        return new ASTNode(
-            'VariableDeclaration', {
-                id: id,
-                valType: type,
-                init
-            }
-        );
+        return new VariableDeclarationNode(id, type, init);
     }
 
     /**
@@ -139,7 +163,7 @@ export default class NodeFactory {
      * @returns 
      */
     static Identifier(name): ASTNode {
-        return new ASTNode('Identifier', { name });
+        return new IdentifierNode(name);
     }
 
     /**
@@ -150,13 +174,7 @@ export default class NodeFactory {
      * @returns 
      */
     static IfStatement(test, consequent, alternate): ASTNode {
-        return new ASTNode(
-            'IfStatement', {
-                test,
-                consequent,
-                alternate
-            }
-        );
+        return new IfStatementNode(test, consequent, alternate);
     }
 
     /**
@@ -165,7 +183,7 @@ export default class NodeFactory {
      * @returns 
      */
     static BooleanLiteral(value): ASTNode {
-        return new ASTNode('BooleanLiteral', { value });
+        return new BooleanLiteralNode(value);
     }
 
     /**
@@ -173,7 +191,7 @@ export default class NodeFactory {
      * @returns 
      */
     static NullLiteral(): ASTNode {
-        return new ASTNode('NullLiteral', { value: null });
+        return new NullLiteralNode();
     }
 
     /**
@@ -184,13 +202,7 @@ export default class NodeFactory {
      * @returns 
      */
     static LogicalExpression(operator, left, right): ASTNode {
-        return new ASTNode(
-            'LogicalExpression', {
-                operator,
-                left,
-                right
-            }
-        );
+        return new LogicalExpressionNode(operator, left, right);
     }
             
     /**
@@ -200,7 +212,7 @@ export default class NodeFactory {
      * @returns 
      */
     static UnaryExpression(operator: string, argument: ASTNode): ASTNode {
-        return new ASTNode('UnaryExpression', { operator, argument });
+        return new UnaryExpressionNode(operator, argument);
     }
 
     /**
@@ -210,10 +222,7 @@ export default class NodeFactory {
      * @returns 
      */
     static WhileStatement(test, body): ASTNode {
-        return new ASTNode('WhileStatement', {
-            test,
-            body
-        });
+        return new WhileStatementNode(test, body);
     }
 
     /**
@@ -223,12 +232,7 @@ export default class NodeFactory {
      * @returns 
      */
     static DoWhileStatement(body, test): ASTNode {
-        return new ASTNode(
-            'DoWhileStatement', {
-                body,
-                test
-            }
-        );
+        return new DoWhileStatementNode(test, body);
     }
 
     /**
@@ -240,50 +244,30 @@ export default class NodeFactory {
      * @returns 
      */
     static ForStatement(init, test, update, body): ASTNode {
-        return new ASTNode(
-            'ForStatement', {
-                init,
-                test,
-                update,
-                body
-            }
-        );
+        return new ForStatementNode(init, test, update, body);
     }
 
     /**
      * 
      * @param name 
-     * @param type 
+     * @param returnType 
      * @param params 
      * @param body 
      * @returns 
      */
-    static FunctionDeclaration(name, type, params, body): ASTNode {
-        return new ASTNode(
-            'FunctionDeclaration', {
-                name,
-                returnType: type,
-                params,
-                body
-            }
-        );
+    static FunctionDeclaration(name, returnType, params, body): ASTNode {
+        return new FunctionDeclarationNode(name, returnType, params, body);
     }
 
     /**
      * 
      * @param name 
-     * @param type 
+     * @param returnType 
      * @param params 
      * @returns 
      */
-    static ExternDeclaration(name, type, params): ASTNode {
-        return new ASTNode(
-            'ExternDeclaration', {
-                name,
-                valType: type,
-                params
-            }
-        );
+    static ExternDeclaration(name, returnType, params): ASTNode {
+        return new ExternDeclarationNode(name, returnType, params);
     }
 
     /**
@@ -292,7 +276,7 @@ export default class NodeFactory {
      * @returns 
      */
     static ReturnStatement(argument): ASTNode {
-        return new ASTNode('ReturnStatement', { argument });
+        return new ReturnStatementNode(argument);
     }
 
     /**
@@ -303,11 +287,7 @@ export default class NodeFactory {
      * @returns 
      */
     static MemberExpression(computed, object, property): ASTNode {
-        return new ASTNode('MemberExpression', {
-            computed, 
-            object,
-            property
-        });
+        return new MemberExpressionNode(computed, object, property);
     }
 
     /**
@@ -317,12 +297,7 @@ export default class NodeFactory {
      * @returns 
      */
     static CallExpression(callee, args): ASTNode {
-        return new ASTNode(
-            'CallExpression', {
-                callee,
-                args
-            }
-        );
+        return new CallExpressionNode(callee, args);
     }
 
     /**
@@ -333,13 +308,7 @@ export default class NodeFactory {
      * @returns 
      */
     static ClassDeclaration(id, superClass, body): ASTNode {
-        return new ASTNode(
-            'ClassDeclaration', {
-                id,
-                superClass,
-                body
-            }
-        );
+        return new ClassDeclarationNode(id, superClass, body);
     }
     
     /**
@@ -347,7 +316,7 @@ export default class NodeFactory {
      * @returns 
      */
     static ThisExpression(): ASTNode {
-        return new ASTNode('ThisExpression');
+        return new ThisExpressionNode();
     }
 
     /**
@@ -355,7 +324,7 @@ export default class NodeFactory {
      * @returns 
      */
     static Super(): ASTNode {
-        return new ASTNode('Super');
+        return new SuperNode();
     }
 
     /**
@@ -365,11 +334,6 @@ export default class NodeFactory {
      * @returns 
      */
     static NewExpression(callee, args): ASTNode {
-        return new ASTNode(
-            'NewExpression', {
-                callee,
-                args
-            }
-        );
+        return new NewExpressionNode(callee, args);
     }
 };

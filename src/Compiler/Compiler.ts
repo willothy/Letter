@@ -15,7 +15,7 @@ import Utils from './Utils';
 
 import LetterTypes from './Types';
 import LetterFunction from './Function/Function';
-import ASTNode from "../Parser/ASTNode";
+import { ASTNode } from "../Parser/ASTNodes/ASTNode";
 
 
 export default class Compiler {
@@ -55,6 +55,8 @@ export default class Compiler {
     private NumericLiteral = Generators.NumericLiteral;
     private CharLiteral = Generators.CharLiteral;
     private StringLiteral = Generators.StringLiteral;
+    private LogicalExpression = Generators.LogicalExpression;
+    private IfStatement = Generators.IfStatement;
 
     constructor(moduleName) {
         this.context = new LLVMContext();
@@ -124,7 +126,11 @@ export default class Compiler {
             case 'CharLiteral':
                 return this.CharLiteral(node, fn, parent);
             case 'StringLiteral':
-                return this.StringLiteral(node, fn, parent);             
+                return this.StringLiteral(node, fn, parent);   
+            case 'IfStatement':
+                return this.IfStatement(node, symbols, fn, parent);
+            case 'LogicalExpression':
+                return this.LogicalExpression(node, symbols, fn, parent);          
             default:
                 throw new Error("undefined instruction");
         }

@@ -21,11 +21,16 @@ function div (left, right, builder: IRBuilder) {
     return builder.CreateFDiv(left, right, 'flt_divtmp');
 }
 
+function equal(left, right, builder: IRBuilder) {
+    return builder.CreateFCmpOEQ(left, right, 'flt_cmp_eq');
+}
+
 const LetterFloat = new LetterType('float', create, {
     add,
     sub,
     mul,
-    div
+    div,
+    equal
 });
 
 export default LetterFloat;

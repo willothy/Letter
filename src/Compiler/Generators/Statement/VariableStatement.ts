@@ -1,6 +1,6 @@
 import { ConstantInt } from "llvm-bindings";
 import llvm = require("llvm-bindings");
-import ASTNode from "../../../Parser/ASTNode";
+import { ASTNode } from "../../../Parser/ASTNodes/ASTNode";
 import Compiler from "../../Compiler";
 import LetterTypes from "../../Types";
 
