@@ -775,11 +775,7 @@ class Parser {
             token = this._eat('INTEGER');
         else if (type === 'FLOAT')
             token = this._eat('FLOAT');
-        return {
-            type: 'NumericLiteral',
-            valType: type,
-            value: Number(token.value),
-        };
+        return ASTFactory_1.default.NumericLiteral(type, Number(token.value));
     }
     /**
      * Expects a token of a given type

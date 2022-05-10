@@ -1,9 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const Types_1 = require("../../Types");
-function BlockStatement(node, symbols, types = Object.assign({}, Types_1.default), fn) {
+function BlockStatement(node, symbols, fn, parent) {
     for (const statement of node.body) {
-        this.codegen(statement, symbols, fn);
+        this.codegen(statement, symbols, fn, node);
     }
 }
 exports.default = BlockStatement;

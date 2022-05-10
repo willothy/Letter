@@ -915,11 +915,10 @@ export default class Parser {
             token = this._eat('INTEGER');
         else if (type === 'FLOAT')
             token = this._eat('FLOAT');
-        return {
-            type: 'NumericLiteral',
-            valType: type,
-            value: Number(token.value),
-        };
+        return NodeFactory.NumericLiteral(
+            type,
+            Number(token.value)
+        );
     }
 
     /**

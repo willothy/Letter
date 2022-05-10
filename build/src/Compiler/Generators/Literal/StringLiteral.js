@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-function StringLiteral(node) {
+function StringLiteral(node, fn, parent) {
     const value = `${this.unbackslash(node.value)}\0`;
     /*const baseType = this.builder.getInt8Ty();
     const arrayType = ArrayType.get(baseType, value.length);

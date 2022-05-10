@@ -51,7 +51,7 @@ export default class NodeFactory {
      * @param value 
      * @returns 
      */
-    static StringLiteral(value: ASTNode): ASTNode {
+    static StringLiteral(value): ASTNode {
         return new ASTNode('StringLiteral', { value });
     }
     
@@ -69,8 +69,8 @@ export default class NodeFactory {
      * @param value 
      * @returns 
      */
-    static NumericLiteral(value: ASTNode): ASTNode {
-        return new ASTNode('NumericLiteral', value);
+    static NumericLiteral(type, value): ASTNode {
+        return new ASTNode('NumericLiteral', { valType: type, value });
     }
 
     /**

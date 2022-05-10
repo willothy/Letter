@@ -2,6 +2,33 @@
 // https://stackoverflow.com/a/28191966/6884167
 Object.defineProperty(exports, "__esModule", { value: true });
 const llvm_bindings_1 = require("llvm-bindings");
+function canTypeCast(from, to) {
+    if (llvm_bindings_1.Type.isSameType(from, to))
+        return true;
+    let fromType = this.getKeyByValue(llvm_bindings_1.Type.TypeID, from.getTypeID());
+    fromType = fromType.substring(0, fromType.length - 4);
+    let toType = this.getKeyByValue(llvm_bindings_1.Type.TypeID, to.getTypeID());
+    toType = toType.substring(0, toType.length - 4);
+    if (toType === 'Double' && fromType === 'Float') {
+        return true;
+    }
+    else if (toType === 'Float' && fromType === 'Double') {
+        return true;
+    }
+    else if (toType === 'Double' && fromType === 'Integer') {
+        return true;
+    }
+    else if (toType === 'Float' && fromType === 'Integer') {
+        return true;
+    }
+    else if (toType === 'Integer' && (fromType === 'Float' || fromType === 'Double')) {
+        return true;
+    }
+    else if (toType === 'Integer' && fromType === 'Integer') {
+        return true;
+    }
+    return false;
+}
 /**
  *
  * @param {Object} object
@@ -66,7 +93,7 @@ function handleNumericTypecasts(value, expectedType, gotType, expectedLLVMType) 
         return this.builder.CreateFPExt(value, this.builder.getDoubleTy(), 'flt_upcast');
     }
     else if (expectedType === 'Float' && gotType === 'Double') {
-        return this.builder.CreateFPTrunc(value, this.builder.getDoubleTy(), 'dbl_downcast');
+        return this.builder.CreateFPTrunc(value, this.builder.getFloatTy(), 'dbl_downcast');
     }
     else if (expectedType === 'Double' && gotType === 'Integer') {
         return this.builder.CreateSIToFP(value, this.builder.getDoubleTy(), 'si_to_dbl');
@@ -186,6 +213,7 @@ const Utils = {
     checkType,
     handleNumericTypecasts,
     convertType,
-    convertValue
+    convertValue,
+    canTypeCast
 };
 exports.default = Utils;

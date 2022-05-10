@@ -1,7 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const Types_1 = require("../../Types");
-function ReturnStatement(node, symbols, types = Object.assign({}, Types_1.default), fn) {
-    this.builder.CreateRet(this.codegen(node.argument, symbols, fn));
+function ReturnStatement(node, symbols, fn, parent) {
+    const gen = this.codegen(node.argument, symbols, fn, node);
+    //console.log(fn.getReturnType().getTypeID(), gen);
+    this.builder.CreateRet(this.checkType(gen, fn.getReturnType()));
 }
 exports.default = ReturnStatement;

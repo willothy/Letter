@@ -62,8 +62,8 @@ class NodeFactory {
      * @param value
      * @returns
      */
-    static NumericLiteral(value) {
-        return new ASTNode_1.default('NumericLiteral', value);
+    static NumericLiteral(type, value) {
+        return new ASTNode_1.default('NumericLiteral', { valType: type, value });
     }
     /**
      *

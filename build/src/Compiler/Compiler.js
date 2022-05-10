@@ -6,7 +6,8 @@ const Utils_1 = require("./Utils");
 const Types_1 = require("./Types");
 class Compiler {
     constructor(moduleName) {
-        // Types
+        this.types = Types_1.default;
+        this.functions = {};
         // Utils
         this.unbackslash = Utils_1.default.unbackslash;
         this.getKeyByValue = Utils_1.default.getKeyByValue;
@@ -18,6 +19,7 @@ class Compiler {
         this.handleNumericTypecasts = Utils_1.default.handleNumericTypecasts;
         this.convertType = Utils_1.default.convertType;
         this.convertValue = Utils_1.default.convertValue;
+        this.canTypeCast = Utils_1.default.canTypeCast;
         // Generators
         this.Program = Generators_1.default.Program;
         this.BlockStatement = Generators_1.default.BlockStatement;
@@ -43,7 +45,12 @@ class Compiler {
      * @returns LLVM IR as text
      */
     compile(ast) {
-        this.codegen(ast);
+        (0, llvm_bindings_1.InitializeNativeTarget)();
+        (0, llvm_bindings_1.InitializeNativeTargetAsmPrinter)();
+        (0, llvm_bindings_1.InitializeNativeTargetDisassembler)();
+        (0, llvm_bindings_1.InitializeAllTargetInfos)();
+        (0, llvm_bindings_1.InitializeAllTargetMCs)();
+        this.codegen(ast, {}, undefined, ast);
         return this.module.print();
     }
     /**
@@ -54,43 +61,43 @@ class Compiler {
      * @returns
      */
     /* types:Object={...BuiltinTypes},*/
-    codegen(node, symbols = {}, types = Object.assign({}, Types_1.default), fn = undefined) {
+    codegen(node, symbols = {}, fn = undefined, parent) {
         switch (node.type) {
             case 'Program':
-                this.Program(node, symbols, types, fn);
+                this.Program(node, symbols, fn, parent);
                 return;
             case 'BlockStatement':
-                this.BlockStatement(node, symbols, types, fn);
+                this.BlockStatement(node, symbols, fn, parent);
                 return;
             case 'ReturnStatement':
-                this.ReturnStatement(node, symbols, types, fn);
+                this.ReturnStatement(node, symbols, fn, parent);
                 return;
             case 'FunctionDeclaration':
-                this.FunctionDeclaration(node, symbols, types);
+                this.FunctionDeclaration(node, symbols, parent);
                 return;
             case 'ExpressionStatement':
-                this.ExpressionStatement(node, symbols, types, fn);
+                this.ExpressionStatement(node, symbols, fn, parent);
                 return;
             case 'ExternDeclaration':
-                this.ExternDeclaration(node, types);
+                this.ExternDeclaration(node, parent);
                 return;
             case 'VariableStatement':
-                this.VariableStatement(node, symbols, types, fn);
+                this.VariableStatement(node, symbols, fn, parent);
                 return;
             case 'CallExpression':
-                return this.CallExpression(node, symbols, types, fn);
+                return this.CallExpression(node, symbols, fn, parent);
             case 'AssignmentExpression':
-                return this.AssignmentExpression(node, symbols, types, fn);
+                return this.AssignmentExpression(node, symbols, fn, parent);
             case 'BinaryExpression':
-                return this.BinaryExpression(node, symbols, types, fn);
+                return this.BinaryExpression(node, symbols, fn, parent);
             case 'Identifier':
-                return this.Identifier(node, symbols, types);
+                return this.Identifier(node, symbols, fn, parent);
             case 'NumericLiteral':
-                return this.NumericLiteral(node);
+                return this.NumericLiteral(node, fn, parent);
             case 'CharLiteral':
-                return this.CharLiteral(node);
+                return this.CharLiteral(node, fn, parent);
             case 'StringLiteral':
-                return this.StringLiteral(node);
+                return this.StringLiteral(node, fn, parent);
             default:
                 throw new Error("undefined instruction");
         }
