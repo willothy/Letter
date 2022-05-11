@@ -19,6 +19,7 @@ Features that are working now:
 - Function definitions
     - Void type
     - Overloading
+- If statements
 - Implicit typecasting of numbers
 - Printing values using print.lt (printf wrapper)
 - Strings, Floats, Doubles, Booleans, Integers 

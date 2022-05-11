@@ -15,6 +15,7 @@ import Identifier from './Expression/Identifier';
 import NumericLiteral from './Literal/NumericLiteral';
 import CharLiteral from './Literal/CharLiteral';
 import StringLiteral from './Literal/StringLiteral';
+import BoolLiteral from './Literal/BoolLiteral';
 
 import LogicalExpression from './Expression/LogicalExpression';
 import IfStatement from './ControlFlow/IfStatement';
@@ -34,6 +35,7 @@ const Generators = {
     NumericLiteral,
     CharLiteral,
     StringLiteral,
+    BoolLiteral,
     LogicalExpression,
     IfStatement
 }

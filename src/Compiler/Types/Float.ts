@@ -25,12 +25,47 @@ function equal(left, right, builder: IRBuilder) {
     return builder.CreateFCmpOEQ(left, right, 'flt_cmp_eq');
 }
 
+function notEqual(left, right, builder: IRBuilder) {
+    return builder.CreateFCmpONE(left, right, 'flt_cmp_ne');
+}
+
+function strictEqual(left, right, builder: IRBuilder) {
+    return builder.CreateFCmpOLE(left, right, 'flt_cmp_seq');
+}
+
+function strictNotEqual(left, right, builder: IRBuilder) {
+    return builder.CreateFCmpOLE(left, right, 'flt_cmp_sne');
+}
+
+function lessThan(left, right, builder: IRBuilder) {
+    return builder.CreateFCmpOLE(left, right, 'flt_cmp_lt');
+}
+
+function greaterThan(left, right, builder: IRBuilder) {
+    return builder.CreateFCmpOLE(left, right, 'flt_cmp_gt');
+}
+
+function greaterOrEqual(left, right, builder: IRBuilder) {
+    return builder.CreateFCmpOLE(left, right, 'flt_cmp_ge');
+}
+
+function lessOrEqual(left, right, builder: IRBuilder) {
+    return builder.CreateFCmpOLE(left, right, 'flt_cmp_le');
+}
+
 const LetterFloat = new LetterType('float', create, {
     add,
     sub,
     mul,
     div,
-    equal
+    equal,
+    notEqual,
+    strictEqual,
+    strictNotEqual,
+    lessThan,
+    greaterThan,
+    lessOrEqual,
+    greaterOrEqual
 });
 
 export default LetterFloat;

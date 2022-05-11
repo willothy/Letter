@@ -7,9 +7,6 @@ import LetterTypes from "../../Types";
 function hasSameCallArgs(letterFn: LetterFunction, calleeFn: {
     argTypes: Type[]
 }) {
-    /*if (letterFn.argTypes.length != calleeFn.argTypes.length) 
-        return false;*/
-    
     for (const [index, t] of Object.entries(letterFn.argTypes)) {
         if (!Type.isSameType(t, calleeFn.argTypes[index]))
             return false;
@@ -43,6 +40,9 @@ export default function CallExpression(this: Compiler, node: ASTNode, symbols, f
             return this.builder.CreateCall(
                 fn.llvm, 
                 callArgs,
+                !Type.isSameType(fn.returnType, Type.getVoidTy(this.context)) 
+                    ? `${fn.baseName}_call` 
+                    : ''
             );
         } else if (hasSameCallArgs(fn, { argTypes }) && !sameRetType)
             possibles.push(fn);
@@ -60,6 +60,9 @@ export default function CallExpression(this: Compiler, node: ASTNode, symbols, f
             return this.builder.CreateCall(
                 fn.llvm, 
                 callArgs,
+                !Type.isSameType(fn.returnType, Type.getVoidTy(this.context)) 
+                    ? `${fn.baseName}_call` 
+                    : ''
             );
         }
     }

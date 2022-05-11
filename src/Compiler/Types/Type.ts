@@ -14,7 +14,7 @@ export default class LetterType {
     div?: (left, right, builder: IRBuilder) => any;
 
     // Access operator
-    access?: (start: number, end: number, builder: IRBuilder) => any;
+    access?: (node, start: number, end: number, builder: IRBuilder) => any;
 
     // Comparison operators
     equal?: (left, right, builder: IRBuilder) => any;
@@ -45,7 +45,7 @@ export default class LetterType {
         sub?: (left, right, builder: IRBuilder) => any,
         mul?: (left, right, builder: IRBuilder) => any,
         div?: (left, right, builder: IRBuilder) => any,
-        access?: (start: number, end: number, builder: IRBuilder) => any,
+        access?: (node, start: number, end: number, builder: IRBuilder) => any,
         equal?: (left, right, builder: IRBuilder) => any,
         notEqual?: (left, right, builder: IRBuilder) => any,
         strictEqual?: (left, right, builder: IRBuilder) => any,

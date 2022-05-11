@@ -8,7 +8,8 @@
     "template": "cp ./__tests__/template.js ./__tests__/$npm_config_name",
     "build": "npx tsc",
     "compile": "./letterc.sh",
-    "object": "./letterb.sh"
+    "object": "./letterb.sh",
+    "dev": "npx ts-node ./letter.ts"
   },
   "author": "",
   "license": "GPLv2",

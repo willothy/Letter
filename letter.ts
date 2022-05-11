@@ -3,7 +3,7 @@
 import Parser from './src/Parser/Parser';
 import Compiler from './src/Compiler/Compiler';
 
-import { readFileSync } from "fs";
+import { readFileSync, writeFile } from "fs";
 import { dirname, resolve, basename } from 'path';
 
 import * as llvm from 'llvm-bindings';
@@ -45,7 +45,9 @@ function main(argv) {
 
     if (rest.includes('-i') || rest.includes('--emit-ir')) {
         const result = compiler.compile(ast);//evaluator.eval(ast);
-        console.log(result);
+        writeFile(`${moduleName}.ll`, result, (err) => {
+            if (err) console.error(`ERROR: Could not write file ${moduleName}.ll.`);
+        });
     }
     
     //console.log(result == 0 ? "Program finished successfully with exit code 0." : `Program exited with code: ${result}`);

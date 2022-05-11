@@ -101,7 +101,7 @@ function handleNumericTypecasts(this: Compiler, value, expectedType, gotType, ex
     } else if (expectedType === 'Float' && gotType === 'Integer') {
         return this.builder.CreateSIToFP(value, this.builder.getFloatTy(), 'si_to_flt');
     } else if (expectedType === 'Integer' && (gotType === 'Float' || gotType === 'Double')) {
-        return this.builder.CreateFPToSI(value, this.builder.getInt64Ty(), 'flt_to_si');
+        return this.builder.CreateFPToSI(value, this.builder.getInt32Ty(), 'flt_to_si');
     } else if (expectedType === 'Integer' && gotType === 'Integer') {
         return this.builder.CreateTruncOrBitCast(value, expectedLLVMType, 'i_to_i');
     }

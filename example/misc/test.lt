@@ -1,0 +1,26 @@
+#dependency "example/print.lt"
+#define pi 3.1415926
+
+proc double circumference(double radius) {
+    return 2 * pi * radius;
+}
+
+proc double circumference(float radius) {
+    return 2 * pi * radius;
+}
+
+proc float circumference(float radius) {
+    return 2 * pi * radius;
+}
+
+proc int main() {
+    let int x = 1;
+    let float y = 1.0;
+    if (x == y) {
+        printBool(true);
+    }
+    if (x == y) {
+        printBool(true);
+    }
+    return 0;
+}

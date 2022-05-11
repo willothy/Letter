@@ -17,6 +17,7 @@ import LetterTypes from './Types';
 import LetterFunction from './Function/Function';
 import { ASTNode } from "../Parser/ASTNodes/ASTNode";
 import llvm = require("llvm-bindings");
+import { EmitFlags, ModifierFlags } from "typescript";
 
 
 export default class Compiler {
@@ -53,9 +54,12 @@ export default class Compiler {
     private AssignmentExpression = Generators.AssignmentExpression;
     private BinaryExpression = Generators.BinaryExpression;
     private Identifier = Generators.Identifier;
+
     private NumericLiteral = Generators.NumericLiteral;
     private CharLiteral = Generators.CharLiteral;
     private StringLiteral = Generators.StringLiteral;
+    private BoolLiteral = Generators.BoolLiteral;
+
     private LogicalExpression = Generators.LogicalExpression;
     private IfStatement = Generators.IfStatement;
 
@@ -77,7 +81,6 @@ export default class Compiler {
 
         InitializeAllTargetInfos();
         InitializeAllTargetMCs();
-
         this.codegen(ast, {}, undefined, ast);
         
         return this.module.print();
@@ -127,7 +130,9 @@ export default class Compiler {
             case 'CharLiteral':
                 return this.CharLiteral(node, fn, parent);
             case 'StringLiteral':
-                return this.StringLiteral(node, fn, parent);   
+                return this.StringLiteral(node, fn, parent); 
+            case 'BooleanLiteral':
+                return this.BoolLiteral(node, fn, parent);  
             case 'IfStatement':
                 return this.IfStatement(node, symbols, fn, parent);
             case 'LogicalExpression':

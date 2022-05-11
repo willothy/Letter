@@ -28,6 +28,7 @@ const Spec = [
     [/^[><]=?/, 'RELATIONAL_OPERATOR'],
 
     // Equality Operators
+    [/^[=!]==/, 'EQUALITY_OPERATOR'],
     [/^[=!]=/, 'EQUALITY_OPERATOR'],
 
     // Logical operators: &&, ||

@@ -182,7 +182,7 @@ export default class NodeFactory {
      * @param value 
      * @returns 
      */
-    static BooleanLiteral(value): ASTNode {
+    static BooleanLiteral(value: boolean): ASTNode {
         return new BooleanLiteralNode(value);
     }
 
